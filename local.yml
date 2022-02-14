@@ -35,6 +35,8 @@ services:
       - published_events_local_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.local/.postgres
+    ports:
+      - "5432:5432"
 
   docs:
     image: published_events_local_docs
@@ -50,7 +52,7 @@ services:
       - ./config:/app/config:z
       - ./published_events:/app/published_events:z
     ports:
-      - "7000:7000"
+      - "7300:7300"
     command: /start-docs
 
   mailhog:

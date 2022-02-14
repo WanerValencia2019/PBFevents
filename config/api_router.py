@@ -1,15 +1,8 @@
-from django.conf import settings
-from rest_framework.routers import DefaultRouter, SimpleRouter
-
-from published_events.users.api.views import UserViewSet
-
-if settings.DEBUG:
-    router = DefaultRouter()
-else:
-    router = SimpleRouter()
-
-router.register("users", UserViewSet)
-
+from published_events.apps.users.urls import urlpatterns as user_routes
 
 app_name = "api"
-urlpatterns = router.urls
+urlpatterns = []
+
+# USER ROUTES MANAGEMENT
+urlpatterns += user_routes
+
