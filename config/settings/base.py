@@ -1,6 +1,7 @@
 """
 Base settings to build other settings files upon.
 """
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -76,11 +77,19 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "published_events.apps.users",
+    "published_events.apps.events",
+    "published_events.apps.multimedia",
+    "published_events.apps.payments",
+    "published_events.apps.sales_profile",
     # Your stuff: custom apps go here
 ]
+
+# URL
+
+APPEND_SLASH = False
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
-
 
 # MIGRATIONS
 # ------------------------------------------------------------------------------
@@ -237,7 +246,7 @@ LOGGING = {
     "formatters": {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s "
-            "%(process)d %(thread)d %(message)s"
+                      "%(process)d %(thread)d %(message)s"
         }
     },
     "handlers": {
@@ -302,6 +311,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+}
+
+# JWT TOKEN
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30)
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup

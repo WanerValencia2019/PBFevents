@@ -11,7 +11,7 @@
           </list>
         </option>
         <option name="sourceFilePath" value="local.yml" />
-        <option name="upDetach" value="false" />
+        <option name="upRemoveOrphans" value="true" />
       </settings>
     </deployment>
     <method v="2" />

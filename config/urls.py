@@ -15,10 +15,10 @@ urlpatterns = [
 
 # API URLS
 urlpatterns += [
-    path("api/", include("config.api_router"), name="published_events_api"),
-    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    path("published_events/api/", include("config.api_router"), name="published_events_api"),
+    path("published_events/api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(
-        "api/docs/",
+        "published_events/api/docs/",
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
@@ -45,6 +45,8 @@ if settings.DEBUG:
         ),
         path("500/", default_views.server_error),
     ]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar
 

@@ -30,3 +30,8 @@ drf-spectacular==0.21.2
 django-rest-passwordreset==1.2.1
 djangorestframework-simplejwt==5.0.0
 django-rest-auth
+
+#PAYMENT
+mercadopago==2.0.10
+
+

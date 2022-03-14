@@ -21,7 +21,6 @@ class CustomUser(AbstractUser):
 def set_uuid(instance, *args, **kwargs):
     if not instance.id:
         instance.id = uuid.uuid4().hex
-        print(instance.id)
 
 
 # SIGNAL FOR SEND EMAIL ON RESET PASSWORD(SEND TOKEN)

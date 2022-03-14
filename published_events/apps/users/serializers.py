@@ -8,6 +8,18 @@ from .validators import secure_password
 User = get_user_model()
 
 
+class PublicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "last_name"]
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = ["password"]
+
+
 class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=40, required=True)
     first_name = serializers.CharField(required=True)
@@ -29,7 +41,7 @@ class RegisterSerializer(serializers.Serializer):
     def validate(self, data):
         username = data.get('username', None)
         email = data.get('email', None)
-        if User.objects.filter(username=username).first() :
+        if User.objects.filter(username=username).first():
             raise ValidationError({'message': 'Este usuario no está disponible'})
         elif User.objects.filter(email=email).first():
             raise ValidationError({'message': 'Este correo electrónico no está disponible'})
