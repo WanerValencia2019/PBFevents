@@ -18,9 +18,8 @@ DJANGO_SERVER_EMAIL=
 
 # AWS
 # ------------------------------------------------------------------------------
-DJANGO_AWS_ACCESS_KEY_ID=
-DJANGO_AWS_SECRET_ACCESS_KEY=
-DJANGO_AWS_STORAGE_BUCKET_NAME=
+DJANGO_AWS_STORAGE_BUCKET_NAME="publishedevents"
+DJANGO_AWS_S3_REGION_NAME="us-east-2"
 
 # django-allauth
 # ------------------------------------------------------------------------------
@@ -32,7 +31,7 @@ WEB_CONCURRENCY=4
 
 # Sentry
 # ------------------------------------------------------------------------------
-SENTRY_DSN=
+SENTRY_DSN="https://64746ca4ea0442b680f30521e68a122a@o1099166.ingest.sentry.io/6268133"
 
 
 # Redis

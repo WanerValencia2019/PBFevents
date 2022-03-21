@@ -4,7 +4,7 @@ import parser
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet, ViewSetMixin
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -117,4 +117,21 @@ class ListEvents(ViewSetMixin, ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
+        return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
+
+class DetailEvent(ViewSetMixin, RetrieveAPIView):
+    serializer_class = EventInfoSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        try: 
+            event = Event.objects.get(id=pk)
+            return event
+        except ObjectDoesNotExist as e:
+            return None
+
+    def retrieve(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        print("Hello")
+        serialized_data = self.get_serializer_class()(instance=queryset, context={"request": request})
         return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)

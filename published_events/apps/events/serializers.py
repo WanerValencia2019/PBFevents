@@ -7,6 +7,8 @@ from rest_framework.exceptions import ValidationError, NotFound
 from published_events.apps.events.models import Category, TicketType, Event
 from published_events.apps.users.serializers import UserSerializer, PublicUserSerializer
 
+from published_events.apps.multimedia.serializers import ImageSerializer
+
 User = get_user_model()
 
 
@@ -25,10 +27,12 @@ class TicketTypeSerializer(serializers.ModelSerializer):
 class EventInfoSerializer(serializers.ModelSerializer):
     created_by = PublicUserSerializer(read_only=True)
     categories = CategorySerializer(many=True, read_only=True)
+    image = ImageSerializer(many=False, read_only=True)
+    other_images = ImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Event
-        fields = ["id", "created_at", "created_by", "title", "description", "address", "image", "slug",
+        fields = ["id", "created_at", "created_by", "title", "description", "address", "image","other_images", "slug",
                   "space_available",
                   "start_date",
                   "end_date", "latitude", "longitude", "categories"]
