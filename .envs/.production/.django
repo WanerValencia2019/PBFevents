@@ -18,8 +18,10 @@ DJANGO_SERVER_EMAIL=
 
 # AWS
 # ------------------------------------------------------------------------------
+DJANGO_AWS_ACCESS_KEY_ID="AKIAW55PFLRBKMUYB5XT"
+DJANGO_AWS_SECRET_ACCESS_KEY="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"
 DJANGO_AWS_STORAGE_BUCKET_NAME="publishedevents"
-DJANGO_AWS_S3_REGION_NAME="us-east-2"
+DJANGO_AWS_S3_REGION_NAME="us-east-1"
 
 # django-allauth
 # ------------------------------------------------------------------------------
