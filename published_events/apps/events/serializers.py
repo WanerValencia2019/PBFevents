@@ -1,5 +1,4 @@
 from django.core.exceptions import ObjectDoesNotExist
-from pytest_django.fixtures import validate_django_db
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError, NotFound
