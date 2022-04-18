@@ -1,6 +1,3 @@
-import json
-import parser
-
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import action
@@ -11,12 +8,14 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework.response import Response
+from django.db.models import Q
 
 from published_events_deploy.apps.events.models import Event, Category
 from published_events_deploy.apps.events.serializers import EventInfoSerializer, EventCreateSerializer, \
     CreateTicketTypeSerializer, TicketTypeSerializer
 from published_events_deploy.apps.multimedia.models import Image
 from published_events_deploy.apps.multimedia.serializers import ImageSerializer
+from published_events_deploy.utils.all import get_point_distance
 
 
 class EventView(ViewSet):
@@ -110,14 +109,54 @@ class EventView(ViewSet):
         return Response({"data": data}, status=status.HTTP_200_OK)
 
 
+
+
 class ListEvents(ViewSetMixin, ListAPIView):
     serializer_class = EventInfoSerializer
     queryset = Event.objects.all()
+
+    def get_queryset(self):
+        search = self.request.query_params.get("search", None)
+        if search:   
+            queryset = self.queryset.filter(Q(title__icontains=search) | Q(description__icontains=search) | Q(created_by__first_name__icontains=search))
+            return queryset
+        return super().get_queryset()
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
         return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
+
+
+class NearEvents(ViewSetMixin, ListAPIView):
+    serializer_class = EventInfoSerializer
+    queryset = Event.objects.all()
+
+    def get_queryset(self):
+        current_latitude = self.request.query_params.get('latitude', 0.0)
+        current_longitude = self.request.query_params.get('longitude', 0.0)
+
+        print(current_latitude, current_longitude)
+        
+        events = Event.objects.all()
+        near_events = []
+        minimun_distance = 50
+        for event in events:
+            distance = get_point_distance(current_latitude, current_longitude, event.latitude, event.longitude)
+            print("==========================")
+            print("distance", distance)
+            print("==========================")
+            if distance <= minimun_distance:
+                near_events.append(event)
+        return near_events
+        
+    #params latitude longitude
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
+        return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
+
+    
 
 class DetailEvent(ViewSetMixin, RetrieveAPIView):
     serializer_class = EventInfoSerializer

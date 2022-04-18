@@ -46,6 +46,7 @@ class EventCreateSerializer(serializers.Serializer):
     latitude = serializers.CharField(max_length=100, required=True)
     start_date = serializers.DateTimeField(required=True)
     end_date = serializers.DateTimeField(required=True)
+    sell_limit_date = serializers.DateTimeField(required=True)
     categories = serializers.ListField(required=True)
 
     def create(self, validated_data):
@@ -61,6 +62,7 @@ class EventCreateSerializer(serializers.Serializer):
             address=validated_data.get("address"),
             longitude=validated_data.get("longitude"),
             latitude=validated_data.get("latitude"),
+            sell_limit_date=validated_data.get("sell_limit_date"),
         )
         new_event.save()
 

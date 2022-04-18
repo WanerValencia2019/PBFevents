@@ -17,11 +17,11 @@ class PublicUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = ["password"]
+        exclude = ["password", "groups", "user_permissions"]
 
 
 class RegisterSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=40, required=True)
+    #username = serializers.CharField(max_length=40, required=True)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
@@ -39,10 +39,11 @@ class RegisterSerializer(serializers.Serializer):
         return user
 
     def validate(self, data):
-        username = data.get('username', None)
+        print(data)
+        #username = data.get('username', None)
         email = data.get('email', None)
-        if User.objects.filter(username=username).first():
-            raise ValidationError({'message': 'Este usuario no está disponible'})
-        elif User.objects.filter(email=email).first():
+        #if User.objects.filter(username=username).first():
+        #    raise ValidationError({'message': 'Este usuario no está disponible'})
+        if User.objects.filter(email=email).first():
             raise ValidationError({'message': 'Este correo electrónico no está disponible'})
         return data

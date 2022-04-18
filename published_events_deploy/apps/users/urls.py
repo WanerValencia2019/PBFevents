@@ -4,9 +4,10 @@ from django_rest_passwordreset.urls import add_reset_password_urls_to_router
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 #custom views
-from .views import RegisterView
+from .views import RegisterView, UserView
 
 router = SimpleRouter()
+router.register('user', UserView, basename='user')
 add_reset_password_urls_to_router(router, base_path='auth/passwordreset')
 
 

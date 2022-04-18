@@ -78,7 +78,7 @@ class Event(models.Model):
                                  on_delete=models.SET_NULL,
                                  related_name="image_events")
     other_images = models.ManyToManyField(Image, verbose_name="Otras imagenes",
-                                          related_name="other_images_event")
+                                          related_name="other_images_event", blank=True)
     address = models.CharField(verbose_name="Dirección", max_length=150, null=True)
     sell_limit_date = models.DateTimeField(default=now, verbose_name="Fecha limite de venta")
     start_date = models.DateTimeField(default=now, verbose_name="Fecha de inicio")
@@ -90,7 +90,7 @@ class Event(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
     class Meta:
         verbose_name = "Evento"

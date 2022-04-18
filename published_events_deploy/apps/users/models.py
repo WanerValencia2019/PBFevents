@@ -15,7 +15,12 @@ from django_rest_passwordreset.signals import reset_password_token_created
 class CustomUser(AbstractUser):
     id = models.CharField(max_length=36, primary_key=True, blank=True)
     email = models.EmailField(verbose_name='Correo electrónico', unique=True)
-
+    username = models.CharField(max_length=40, unique=True, null=True)
+    description = models.TextField(verbose_name="Descripción",blank=True, null=True)
+    image = models.ImageField(verbose_name="Imagen de perfil",upload_to='users/%Y/%m/%d', blank=True, null=True)
+    
+    def __str__(self) -> str:
+        return self.email
 
 @receiver(pre_save, sender=CustomUser)
 def set_uuid(instance, *args, **kwargs):

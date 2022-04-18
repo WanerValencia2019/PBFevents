@@ -34,4 +34,7 @@ django-rest-auth
 #PAYMENT
 mercadopago==2.0.10
 
+#FILTER
+
+django-filter
 
