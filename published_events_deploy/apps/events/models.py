@@ -39,6 +39,7 @@ class TicketType(models.Model):
     description = models.CharField(max_length=150, verbose_name="Descripción corta")
     unit_price = models.FloatField(default=0.0, verbose_name="Precio del ticket")
     availables = models.IntegerField(default=0, verbose_name="Espacios disponibles para esta entrada")
+    ticket_sales = models.IntegerField(default=0, verbose_name="Tickets vendidos", blank=True)
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, related_name="ticket_type_event")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Confirmar</title>
+</head>
+<body>
+    <h1>Confirmar</h1>
+    <form  method="post" action="{{ pay.action }}">
+        <input name="merchantId"      type="hidden"  value="{{ pay.merchant_id }}"   >
+        <input name="accountId"       type="hidden"  value="{{ pay.account_id }}" >
+        <input name="description"     type="hidden"  value="{{ pay.description }}"  >
+        <input name="referenceCode"   type="hidden"  value="{{ pay.reference_code }}" >
+        <input name="amount"          type="hidden"  value="{{ pay.amount }}"   >
+        <input name="tax"             type="hidden"  value="{{ pay.tax }}"  >
+        <input name="taxReturnBase"   type="hidden"  value="{{ pay.tax_return_base }}" >
+        <input name="currency"        type="hidden"  value="{{ pay.money }}" >
+        <input name="signature"       type="hidden"  value="{{ pay.payment_signature }}"  >
+        <input name="algorithmSignature"       type="hidden"  value="{{ pay.algorithm_signature }}"  >
+        <input name="test"            type="hidden"  value="{{ pay.test }}" >
+        <input name="buyerEmail"      type="hidden"  value="{{ pay.email }}" >
+        <input name="responseUrl"     type="hidden"  value="{{ pay.response_url }}" >
+        <input name="confirmationUrl" type="hidden"  value="{{ pay.confirm_url }}" >
+        <input name="buyerFullName"    type="hidden"  value={{ pay.buyer_full_name }}  >
+        <input name="telephone"    type="hidden"  value="{{ pay.phone }}"   >
+        <input name="Submit"          type="submit"  value="Send" >
+      </form>
+</body>
+</html>

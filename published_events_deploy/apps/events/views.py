@@ -56,6 +56,12 @@ class EventView(ViewSet):
             event = Event.objects.get(id=pk)
             if not files.get('image'):
                 return Response({"image": ["Este campo es requerido"]}, status=status.HTTP_400_BAD_REQUEST)
+            image = files.get('image')
+            if image.size > 1024000: 
+                return Response({"message": ["El tamaño del archivo excede el maximo permitido(1MB)"]}, status=status.HTTP_400_BAD_REQUEST)
+
+            if not image.content_type.split("/")[0] == "image":
+                return Response({"message": ["Imagen no válida, revisa el formato del archivo"]}, status=status.HTTP_400_BAD_REQUEST)
 
             image_serialized = ImageSerializer(data=files)
             image_serialized.is_valid(raise_exception=True)
@@ -82,6 +88,12 @@ class EventView(ViewSet):
             event = Event.objects.get(id=pk)
             if not files.get('image'):
                 return Response({"image": ["Este campo es requerido"]}, status=status.HTTP_400_BAD_REQUEST)
+            image = files.get('image')
+            if image.size > 1024000: 
+                return Response({"message": ["El tamaño del archivo excede el maximo permitido(1MB)"]}, status=status.HTTP_400_BAD_REQUEST)
+
+            if not image.content_type.split("/")[0] == "image":
+                return Response({"message": ["Imagen no válida, revisa el formato del archivo"]}, status=status.HTTP_400_BAD_REQUEST)
 
             image_serialized = ImageSerializer(data=files)
             image_serialized.is_valid(raise_exception=True)
@@ -107,9 +119,6 @@ class EventView(ViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"data": data}, status=status.HTTP_200_OK)
-
-
-
 
 class ListEvents(ViewSetMixin, ListAPIView):
     serializer_class = EventInfoSerializer
@@ -156,7 +165,6 @@ class NearEvents(ViewSetMixin, ListAPIView):
         serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
         return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
 
-    
 
 class DetailEvent(ViewSetMixin, RetrieveAPIView):
     serializer_class = EventInfoSerializer
