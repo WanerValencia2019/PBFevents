@@ -1,4 +1,3 @@
-from pickle import TRUE
 import uuid
 
 from django.db import models
@@ -15,7 +14,7 @@ from django_rest_passwordreset.signals import reset_password_token_created
 
 class CustomUser(AbstractUser):
     id = models.CharField(max_length=36, primary_key=True, blank=True)
-    identification = models.CharField(max_length=12, verbose_name="Identificación", blank=True, null=True)
+    identification = models.CharField(max_length=12, verbose_name="Identificación", unique=True)
     email = models.EmailField(verbose_name='Correo electrónico', unique=True)
     username = models.CharField(max_length=40, unique=True, null=True)
     description = models.TextField(verbose_name="Descripción",blank=True, null=True)
