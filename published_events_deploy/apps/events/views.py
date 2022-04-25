@@ -57,11 +57,13 @@ class EventView(ViewSet):
             if not files.get('image'):
                 return Response({"image": ["Este campo es requerido"]}, status=status.HTTP_400_BAD_REQUEST)
             image = files.get('image')
-            if image.size > 1024000: 
-                return Response({"message": ["El tamaño del archivo excede el maximo permitido(1MB)"]}, status=status.HTTP_400_BAD_REQUEST)
+            if image.size > 1024000:
+                return Response({"message": ["El tamaño del archivo excede el maximo permitido(1MB)"]},
+                                status=status.HTTP_400_BAD_REQUEST)
 
             if not image.content_type.split("/")[0] == "image":
-                return Response({"message": ["Imagen no válida, revisa el formato del archivo"]}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": ["Imagen no válida, revisa el formato del archivo"]},
+                                status=status.HTTP_400_BAD_REQUEST)
 
             image_serialized = ImageSerializer(data=files)
             image_serialized.is_valid(raise_exception=True)
@@ -89,11 +91,13 @@ class EventView(ViewSet):
             if not files.get('image'):
                 return Response({"image": ["Este campo es requerido"]}, status=status.HTTP_400_BAD_REQUEST)
             image = files.get('image')
-            if image.size > 1024000: 
-                return Response({"message": ["El tamaño del archivo excede el maximo permitido(1MB)"]}, status=status.HTTP_400_BAD_REQUEST)
+            if image.size > 1024000:
+                return Response({"message": ["El tamaño del archivo excede el maximo permitido(1MB)"]},
+                                status=status.HTTP_400_BAD_REQUEST)
 
             if not image.content_type.split("/")[0] == "image":
-                return Response({"message": ["Imagen no válida, revisa el formato del archivo"]}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": ["Imagen no válida, revisa el formato del archivo"]},
+                                status=status.HTTP_400_BAD_REQUEST)
 
             image_serialized = ImageSerializer(data=files)
             image_serialized.is_valid(raise_exception=True)
@@ -120,14 +124,26 @@ class EventView(ViewSet):
 
         return Response({"data": data}, status=status.HTTP_200_OK)
 
+    @action(methods=["GET"], url_name="get assistants by event", url_path="assistants", detail=True)
+    def get_assistants_by_event(self, request, *args, **kwargs):
+        pk = kwargs.get("pk")
+        event = Event.objects.get_assistants(id=pk)
+
+        if event is None:
+            return Response({"message": "Este evento no ha sido encontrado"}, status.HTTP_404_NOT_FOUND)
+
+        return Response({"data": ""}, status=status.HTTP_200_OK)
+
+
 class ListEvents(ViewSetMixin, ListAPIView):
     serializer_class = EventInfoSerializer
     queryset = Event.objects.all()
 
     def get_queryset(self):
         search = self.request.query_params.get("search", None)
-        if search:   
-            queryset = self.queryset.filter(Q(title__icontains=search) | Q(description__icontains=search) | Q(created_by__first_name__icontains=search))
+        if search:
+            queryset = self.queryset.filter(Q(title__icontains=search) | Q(description__icontains=search) | Q(
+                created_by__first_name__icontains=search))
             return queryset
         return super().get_queryset()
 
@@ -145,8 +161,6 @@ class NearEvents(ViewSetMixin, ListAPIView):
         current_latitude = self.request.query_params.get('latitude', 0.0)
         current_longitude = self.request.query_params.get('longitude', 0.0)
 
-        print(current_latitude, current_longitude)
-        
         events = Event.objects.all()
         near_events = []
         minimun_distance = 50
@@ -158,8 +172,8 @@ class NearEvents(ViewSetMixin, ListAPIView):
             if distance <= minimun_distance:
                 near_events.append(event)
         return near_events
-        
-    #params latitude longitude
+
+    # params latitude longitude
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
@@ -171,7 +185,7 @@ class DetailEvent(ViewSetMixin, RetrieveAPIView):
 
     def get_queryset(self):
         pk = self.kwargs.get("pk")
-        try: 
+        try:
             event = Event.objects.get(id=pk)
             return event
         except ObjectDoesNotExist as e:

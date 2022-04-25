@@ -1,6 +1,6 @@
 from published_events_deploy.apps.transactions.models import Transaction, TransactionStatus
 from published_events_deploy.apps.sales_profile.models import SaleProfile
-from published_events_deploy.apps.events.models import TicketType
+from published_events_deploy.apps.events.models import TicketType, Assistant
 from django.core.exceptions import ObjectDoesNotExist
 
 """
@@ -21,6 +21,18 @@ def create_transaction(user_identification:str, ticket_type:TicketType, ticket_a
         user = ticket_type.event.created_by
         ticket_type.ticket_sales += ticket_amount
         ticket_type.save()
+
+        assistant = Assistant()
+        assistant.full_name = payment_result.get("buyer_full_name")
+        assistant.email = payment_result.get("email")
+        assistant.phone = payment_result.get("phone")
+        assistant.identification = payment_result.get("identification")
+        assistant.ticket = ticket_type
+        assistant.ticket_quantity = ticket_amount
+
+        assistant.save()
+
+
         try:
             sale_profile = SaleProfile.objects.get(user=user)
             sale_profile.amount_available += float(payment_result.get('amount'))

@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from slugify import slugify
 
+from published_events_deploy.apps.events.managers import EventManager
 from published_events_deploy.apps.multimedia.models import Image
 
 User = get_user_model()
@@ -87,6 +88,7 @@ class Event(models.Model):
     longitude = models.CharField(max_length=100, null=False, blank=True, verbose_name="Longitud")
     end_date = models.DateTimeField(default=now, verbose_name="Fecha de finalización")
     categories = models.ManyToManyField(Category, related_name="categories_event")
+    objects = EventManager()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -105,3 +107,25 @@ def set_uuid(instance, *args, **kwargs):
 
     if not instance.slug:
         instance.slug = slugify(instance.title)
+
+
+class Assistant(models.Model):
+    id = models.CharField(max_length=36, primary_key=True, blank=True)
+    full_name = models.CharField(max_length=150, verbose_name="Nombre completo")
+    email = models.EmailField(verbose_name="Correo electronico")
+    phone = models.CharField(max_length=12, verbose_name="Telefono")
+    identification = models.CharField(max_length=12, verbose_name="Identificación")
+    ticket = models.ForeignKey(TicketType,verbose_name="Ticker(Entrada)", on_delete=models.RESTRICT)
+    ticket_quantity = models.IntegerField(default=1, verbose_name="Cantidad de tickets")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.full_name
+
+
+
+@receiver(pre_save, sender=Assistant)
+def set_uuid(instance, *args, **kwargs):
+    if not instance.id:
+        instance.id = uuid.uuid4().hex

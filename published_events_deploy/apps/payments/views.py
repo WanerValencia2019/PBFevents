@@ -66,7 +66,8 @@ class GeneratePaymentView(APIView):
             "email" :"valenciawaner@gmail.com",
             "buyer_full_name":"Waner Valencia",
             "phone" : "3205959194",
-            "amount": 500000 * 4
+            "amount": 500000 * 4,
+            "identification": "1128024080"
         }
         transaction = create_transaction("1128024080", ticket_type, 4, payment_result)
         print(transaction)"""

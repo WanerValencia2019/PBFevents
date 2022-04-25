@@ -345,4 +345,3 @@ PAYU_TEST_URL = "https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/"
 API_LOCAL_BASE_URL = "http://localhost:8000/published_events_deploy/api"
 API_PRODUCTION_BASE_URL = "https://published-events.herokuapp.com/published_events_deploy/api"
 
-APPEND_SLASH=False

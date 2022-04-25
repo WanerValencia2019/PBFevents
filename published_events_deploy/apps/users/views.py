@@ -12,7 +12,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 # custom serializers
 from .models import CustomUser
 from .serializers import RegisterSerializer, UserSerializer
-from ..utils import get_tokens_for_user
+from ..utils import get_binary_content, get_tokens_for_user
 
 
 class RegisterView(CreateAPIView):
@@ -47,26 +47,30 @@ class UserView(ViewSet):
 
     @action(detail=False, methods=["POST"], name="update_image_profile", url_path="update_image_profile")
     def update_image_profile(self, request, *args, **kwargs):
-        files = self.request.FILES
+        image_base_64 = request.data.get("image", None)
+        image = get_binary_content(image_base_64)
         user = self.get_queryset()
+        dir(image)
         try:
-            image = files.get('image', None)
+            if image_base_64 is None:
+                return Response({"message": ["El campo imagen es requerido"]}, status=status.HTTP_400_BAD_REQUEST)
 
             if not image:
-                return Response({"image": ["Este campo es requerido"]}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": ["La imagén no es válida"]}, status=status.HTTP_400_BAD_REQUEST)
 
-            if image.size > 1024000:
+            """ if image.size > 1024000:
                 return Response({"message": ["El tamaño del archivo excede el maximo permitido(1MB)"]},
                                 status=status.HTTP_400_BAD_REQUEST)
 
             if not image.content_type.split("/")[0] == "image":
                 return Response({"message": ["Imagen no válida, revisa el formato del archivo"]},
-                                status=status.HTTP_400_BAD_REQUEST)
+                                status=status.HTTP_400_BAD_REQUEST)"""
 
-            user.image = image
+            user.image.save(user.first_name + ".jpg", image, save=False)
             user.save()
+            print(user.image)
             user_serialized = UserSerializer(user, context={"request": request}).data
-
+            print(user_serialized)
             return Response(
                 {"data": {"message": "Imagen actualiza correctamente", "image": user_serialized.get("image")}},
                 status=status.HTTP_200_OK)
