@@ -40,7 +40,6 @@ class EventView(ViewSet):
             "data": events.data
         }, status=status.HTTP_200_OK)
 
-    @atomic
     def create(self, request, *args, **kwargs):
         first_data = request.data
         images:dict = request.data.get("images")
