@@ -1,3 +1,5 @@
+from random import random
+from uuid import uuid4
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
@@ -21,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.Serializer):
-    #username = serializers.CharField(max_length=40, required=True)
+    identification = serializers.CharField(max_length=12, required=False)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
@@ -33,7 +35,8 @@ class RegisterSerializer(serializers.Serializer):
         last_name = validated_data.get('last_name', None)
         email = validated_data.get('email', None)
         password = validated_data.get('password', None)
-        user = User(username=username, first_name=first_name, last_name=last_name, email=email)
+        identification = validated_data.get('identification', uuid4().hex[0:12])
+        user = User(username=username, first_name=first_name, last_name=last_name, email=email, identification=identification)
         user.set_password(password)
         user.save()
         return user
