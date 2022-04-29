@@ -24,7 +24,6 @@ class RegisterView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         data = serializer.data
-
         del data["password"]
 
         token = get_tokens_for_user(user)
