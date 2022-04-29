@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import action
@@ -9,12 +10,14 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework.response import Response
 from django.db.models import Q
+from django.db.transaction import atomic
 
 from published_events_deploy.apps.events.models import Event, Category
-from published_events_deploy.apps.events.serializers import EventInfoSerializer, EventCreateSerializer, \
+from published_events_deploy.apps.events.serializers import CategorySerializer, EventInfoSerializer, EventCreateSerializer, \
     CreateTicketTypeSerializer, TicketTypeSerializer
 from published_events_deploy.apps.multimedia.models import Image
 from published_events_deploy.apps.multimedia.serializers import ImageSerializer
+from published_events_deploy.apps.utils import get_binary_content
 from published_events_deploy.utils.all import get_point_distance
 
 
@@ -37,16 +40,47 @@ class EventView(ViewSet):
             "data": events.data
         }, status=status.HTTP_200_OK)
 
+    @atomic
     def create(self, request, *args, **kwargs):
-        data = request.data
-        serialized_data = EventCreateSerializer(data=data, context={"request": request})
+        first_data = request.data
+        images:dict = request.data.get("images")
+        tickets:list = request.data.get("tickets")
+
+        if not images.get("mainImage"):
+            return Response({
+                "message": [ _("Main image is required into images")]
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
         serialized_data.is_valid(raise_exception=True)
-        event = serialized_data.save()
+        event:Event = serialized_data.save()
 
         if not event:
             return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
+        
+        file = get_binary_content(images.get("mainImage"))
 
-        return Response({"data": self.serializer_class(instance=event).data}, status=status.HTTP_201_CREATED)
+        if not file:
+                return Response({"message": ["La imagén no es válida"]}, status=status.HTTP_400_BAD_REQUEST)
+
+        main_image = Image()
+        main_image.image.save(event.slug + "_main.jpg", file, save=False)
+        main_image.save()
+
+        event.image = main_image
+        event.save()
+
+        for ticket in tickets:
+            ticket["event"] = event.id
+            ticket["availables"] = ticket.get("quantity", 0)
+            ticket_type = CreateTicketTypeSerializer(data=ticket, context={"request": request})
+            ticket_type.is_valid(raise_exception=True)
+            ticket_type.save()
+
+        
+        new_event_serialized = EventInfoSerializer(instance=event, many=False, context={"request": request}).data
+
+        return Response({"message":[_("Evento creado satisfactoriamente")],"data": new_event_serialized}, status=status.HTTP_201_CREATED)
 
     @action(methods=["POST"], url_name="add-ticket-to-event", url_path="set_main_image", detail=True, )
     def set_main_image(self, request, *args, **kwargs):
@@ -105,6 +139,7 @@ class EventView(ViewSet):
 
             event.other_images.add(new_image)
             event.save()
+        
 
             return Response({"message": "Imagen agregada correctamente"}, status=status.HTTP_200_OK)
         except ObjectDoesNotExist as e:
@@ -141,14 +176,21 @@ class ListEvents(ViewSetMixin, ListAPIView):
 
     def get_queryset(self):
         search = self.request.query_params.get("search", None)
+        status = self.request.query_params.get("status", "all") #active #expired #all
+        queryset = self.queryset
         if search:
-            queryset = self.queryset.filter(Q(title__icontains=search) | Q(description__icontains=search) | Q(
+            queryset = queryset.filter(Q(title__icontains=search) | Q(description__icontains=search) | Q(
                 created_by__first_name__icontains=search))
-            return queryset
-        return super().get_queryset()
+
+        if status == "active":
+            queryset = queryset.filter(sell_limit_date__gte=datetime.now()) 
+        elif status == "expired":
+            queryset = queryset.filter(sell_limit_date__lt=datetime.now())
+
+        return queryset
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().order_by("-sell_limit_date")
         serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
         return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
 
@@ -161,7 +203,7 @@ class NearEvents(ViewSetMixin, ListAPIView):
         current_latitude = self.request.query_params.get('latitude', 0.0)
         current_longitude = self.request.query_params.get('longitude', 0.0)
 
-        events = Event.objects.all()
+        events = Event.objects.all().filter(sell_limit_date__gte=datetime.now()) .order_by("start_date")
         near_events = []
         minimun_distance = 50
         for event in events:
@@ -195,4 +237,15 @@ class DetailEvent(ViewSetMixin, RetrieveAPIView):
         queryset = self.get_queryset()
         print("Hello")
         serialized_data = self.get_serializer_class()(instance=queryset, context={"request": request})
+        return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
+
+
+
+class CategoriesView(ViewSetMixin, ListAPIView):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
         return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
