@@ -273,8 +273,9 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
             first_data = request.data
             images:dict = request.data.get("images")
             tickets:list = request.data.get("tickets")
-
+            print(request.data.get("images"))
             print("ENTRADA NUMEROS")
+            print(images)
 
             if not images.get("mainImage"):
                 print("ENTRADA DOS")
