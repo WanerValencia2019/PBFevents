@@ -270,15 +270,25 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
     def create(self, request, *args, **kwargs):
         print("Hello my world")
         try:
-            first_data = request.data
+            all_data = request.data
             images:dict = request.data.get("images")
             tickets:list = request.data.get("tickets")
-            print(request.data.get("images"))
-            print("ENTRADA NUMEROS")
-            print(images)
+
+            info_data = {
+                "title": all_data.get("title"),
+                "description": all_data.get("description"),
+                "start_date": all_data.get("start_date"),
+                "end_date": all_data.get("end_date"),
+                "latitude": all_data.get("latitude"),
+                "longitude": all_data.get("longitude"),
+                "sell_limit_date": all_data.get("sell_limit_date"),
+            }
+
+            serialized_data = EventCreateSerializer(data=info_data, context={"request": request})
+            serialized_data.is_valid(raise_exception=True)
+            event:Event = serialized_data.save()
 
             if not images.get("mainImage"):
-                print("ENTRADA DOS")
                 return Response({
                     "message": ["La imagen pricipal es requerida"]
                 }, status=status.HTTP_400_BAD_REQUEST)
