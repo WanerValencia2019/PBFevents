@@ -293,7 +293,7 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             
-            return Response({"message": e.args}, status=status.HTTP_400_BAD_REQUEST)})
+            return Response({"message": e.args}, status=status.HTTP_400_BAD_REQUEST)
 
         #serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
         #serialized_data.is_valid(raise_exception=True)
