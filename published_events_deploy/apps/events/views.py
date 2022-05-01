@@ -86,6 +86,14 @@ class EventView(ViewSet):
 
         return Response({"message":["Evento creado satisfactoriamente"],"data": "Hello"}, status=status.HTTP_201_CREATED)
 
+    @action(methods=["POST"], url_name="create new event", url_path="new", detail=True, )
+    def create_event(self, request, *args, **kwargs): 
+        first_data = request.data
+        print("first_data: ", first_data)
+
+        return Response({"message":["Evento creado satisfactoriamente"],"data": "Hello"}, status=status.HTTP_201_CREATED)
+
+
     @action(methods=["POST"], url_name="add-ticket-to-event", url_path="set_main_image", detail=True, )
     def set_main_image(self, request, *args, **kwargs):
         files = self.request.FILES
