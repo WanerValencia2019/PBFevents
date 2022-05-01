@@ -45,7 +45,10 @@ class EventView(ViewSet):
         images:dict = request.data.get("images")
         tickets:list = request.data.get("tickets")
 
+        print("ENTRADA NUMEROS")
+
         if not images.get("mainImage"):
+            print("ENTRADA DOS")
             return Response({
                 "message": [ _("Main image is required into images")]
             }, status=status.HTTP_400_BAD_REQUEST)
@@ -53,6 +56,8 @@ class EventView(ViewSet):
         serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
         serialized_data.is_valid(raise_exception=True)
         event:Event = serialized_data.save()
+
+        print("ENTRADA 3")
 
         if not event:
             return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
