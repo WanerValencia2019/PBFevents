@@ -20,7 +20,6 @@ from published_events_deploy.apps.multimedia.serializers import ImageSerializer
 from published_events_deploy.apps.utils import get_binary_content
 from published_events_deploy.utils.all import get_point_distance
 
-
 class EventView(ViewSet):
     serializer_class = EventInfoSerializer
     model = Event
@@ -293,7 +292,8 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
                     "message": ["La imagen pricipal es requerida"]
                 }, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return e
+            
+            return Response({"message": e.args}, status=status.HTTP_400_BAD_REQUEST)})
 
         #serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
         #serialized_data.is_valid(raise_exception=True)
