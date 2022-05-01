@@ -264,8 +264,24 @@ class CategoriesView(ViewSetMixin, ListAPIView):
 
 class CreateEventView(ViewSetMixin, CreateAPIView):
     serializer_class = EventCreateSerializer
+    authentication_classes = [JWTAuthentication]
     queryset = Category.objects.all()
 
     def create(self, request, *args, **kwargs):
         print("Hello my world")
+        first_data = request.data
+        images:dict = request.data.get("images")
+        tickets:list = request.data.get("tickets")
+
+        print("ENTRADA NUMEROS")
+
+        if not images.get("mainImage"):
+            print("ENTRADA DOS")
+            return Response({
+                "message": ["La imagen pricipal es requerida"]
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        #serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
+        #serialized_data.is_valid(raise_exception=True)
+        #event:Event = serialized_data.save()
         return  Response({"data":"JEFE"}, status=status.HTTP_200_OK)
