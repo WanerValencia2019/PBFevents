@@ -50,7 +50,7 @@ class EventView(ViewSet):
         if not images.get("mainImage"):
             print("ENTRADA DOS")
             return Response({
-                "message": [ _("Main image is required into images")]
+                "message": ["La imagen pricipal es requerida"]
             }, status=status.HTTP_400_BAD_REQUEST)
 
         serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
@@ -62,17 +62,17 @@ class EventView(ViewSet):
         if not event:
             return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
         
-        file = get_binary_content(images.get("mainImage"))
+        ##file = get_binary_content(images.get("mainImage"))
 
-        if not file:
-                return Response({"message": ["La imagén no es válida"]}, status=status.HTTP_400_BAD_REQUEST)
+        #if not file:
+        #        return Response({"message": ["La imagén no es válida"]}, status=status.HTTP_400_BAD_REQUEST)
 
-        main_image = Image()
-        main_image.image.save(event.slug + "_main.jpg", file, save=False)
-        main_image.save()
+        ###main_image = Image()
+        ###main_image.image.save(event.slug + "_main.jpg", file, save=False)
+        ###main_image.save()
 
-        event.image = main_image
-        event.save()
+        ###event.image = main_image
+        ###event.save()
 
         for ticket in tickets:
             ticket["event"] = event.id
@@ -84,7 +84,7 @@ class EventView(ViewSet):
         
         new_event_serialized = EventInfoSerializer(instance=event, many=False, context={"request": request}).data
 
-        return Response({"message":[_("Evento creado satisfactoriamente")],"data": new_event_serialized}, status=status.HTTP_201_CREATED)
+        return Response({"message":["Evento creado satisfactoriamente"],"data": new_event_serialized}, status=status.HTTP_201_CREATED)
 
     @action(methods=["POST"], url_name="add-ticket-to-event", url_path="set_main_image", detail=True, )
     def set_main_image(self, request, *args, **kwargs):
