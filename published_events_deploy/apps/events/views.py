@@ -41,9 +41,9 @@ class EventView(ViewSet):
         }, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        first_data = request.data
-        images:dict = request.data.get("images")
-        tickets:list = request.data.get("tickets")
+        #first_data = request.data
+        #images:dict = request.data.get("images")
+        #tickets:list = request.data.get("tickets")
 
         print("ENTRADA NUMEROS")
 
@@ -53,9 +53,9 @@ class EventView(ViewSet):
         #        "message": ["La imagen pricipal es requerida"]
         #    }, status=status.HTTP_400_BAD_REQUEST)
 
-        serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
-        serialized_data.is_valid(raise_exception=True)
-        event:Event = serialized_data.save()
+        #serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
+        #serialized_data.is_valid(raise_exception=True)
+        #event:Event = serialized_data.save()
 
         print("ENTRADA 3")
 
