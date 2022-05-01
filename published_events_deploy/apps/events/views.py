@@ -283,14 +283,16 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
                 "sell_limit_date": all_data.get("sell_limit_date"),
             }
 
-            serialized_data = EventCreateSerializer(data=info_data, context={"request": request})
-            serialized_data.is_valid(raise_exception=True)
-            event:Event = serialized_data.save()
-
             if not images.get("mainImage"):
                 return Response({
                     "message": ["La imagen pricipal es requerida"]
                 }, status=status.HTTP_400_BAD_REQUEST)
+
+            serialized_data = EventCreateSerializer(data=info_data, context={"request": request})
+            serialized_data.is_valid(raise_exception=True)
+            event:Event = serialized_data.save()
+
+
         except Exception as e:
             
             return Response({"message": e.args}, status=status.HTTP_400_BAD_REQUEST)
