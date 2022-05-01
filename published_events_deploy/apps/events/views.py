@@ -47,11 +47,11 @@ class EventView(ViewSet):
 
         print("ENTRADA NUMEROS")
 
-        if not images.get("mainImage"):
-            print("ENTRADA DOS")
-            return Response({
-                "message": ["La imagen pricipal es requerida"]
-            }, status=status.HTTP_400_BAD_REQUEST)
+        #if not images.get("mainImage"):
+        #    print("ENTRADA DOS")
+        #    return Response({
+        #        "message": ["La imagen pricipal es requerida"]
+        #    }, status=status.HTTP_400_BAD_REQUEST)
 
         serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
         serialized_data.is_valid(raise_exception=True)
@@ -59,8 +59,8 @@ class EventView(ViewSet):
 
         print("ENTRADA 3")
 
-        if not event:
-            return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
+        #if not event:
+        #    return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
         
         ##file = get_binary_content(images.get("mainImage"))
 
@@ -72,19 +72,19 @@ class EventView(ViewSet):
         ###main_image.save()
 
         ###event.image = main_image
-        ###event.save()
+        ####event.save()
 
-        for ticket in tickets:
-            ticket["event"] = event.id
-            ticket["availables"] = ticket.get("quantity", 0)
-            ticket_type = CreateTicketTypeSerializer(data=ticket, context={"request": request})
-            ticket_type.is_valid(raise_exception=True)
-            ticket_type.save()
+        #for ticket in tickets:
+        #    ticket["event"] = event.id
+        #    ticket["availables"] = ticket.get("quantity", 0)
+        #    ticket_type = CreateTicketTypeSerializer(data=ticket, context={"request": request})
+        #    ticket_type.is_valid(raise_exception=True)
+        #    ticket_type.save()
 
         
-        new_event_serialized = EventInfoSerializer(instance=event, many=False, context={"request": request}).data
+        #new_event_serialized = EventInfoSerializer(instance=event, many=False, context={"request": request}).data
 
-        return Response({"message":["Evento creado satisfactoriamente"],"data": new_event_serialized}, status=status.HTTP_201_CREATED)
+        return Response({"message":["Evento creado satisfactoriamente"],"data": "Hello"}, status=status.HTTP_201_CREATED)
 
     @action(methods=["POST"], url_name="add-ticket-to-event", url_path="set_main_image", detail=True, )
     def set_main_image(self, request, *args, **kwargs):
