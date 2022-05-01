@@ -24,8 +24,8 @@ from published_events_deploy.utils.all import get_point_distance
 class EventView(ViewSet):
     serializer_class = EventInfoSerializer
     model = Event
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    #authentication_classes = [JWTAuthentication]
+    #permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
