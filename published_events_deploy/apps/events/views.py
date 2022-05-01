@@ -88,22 +88,7 @@ class EventView(ViewSet):
 
     @action(methods=["POST"], url_name="create new event", url_path="new", detail=False)
     def create_event(self, request, *args, **kwargs): 
-        first_data = request.data
-        images:dict = request.data.get("images")
-        tickets:list = request.data.get("tickets")
-
-        print("ENTRADA NUMEROS")
-
-        if not images.get("mainImage"):
-            print("ENTRADA DOS")
-            return Response({
-                "message": ["La imagen pricipal es requerida"]
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
-        serialized_data.is_valid(raise_exception=True)
-        event:Event = serialized_data.save()
-
+ 
 
         return Response({"message":["Evento creado satisfactoriamente"],"data": "Hello"}, status=status.HTTP_201_CREATED)
 
