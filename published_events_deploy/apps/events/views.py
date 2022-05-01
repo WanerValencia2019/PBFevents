@@ -2,7 +2,7 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet, ViewSetMixin
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -260,3 +260,12 @@ class CategoriesView(ViewSetMixin, ListAPIView):
         queryset = self.get_queryset()
         serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
         return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
+
+
+class CreateEventView(ViewSetMixin, CreateAPIView):
+    serializer_class = EventCreateSerializer
+    queryset = Category.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        print("Hello my world")
+        return  Response({"data":"JEFE"}, status=status.HTTP_200_OK)
