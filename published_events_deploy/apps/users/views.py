@@ -94,15 +94,15 @@ class UserView(ViewSet):
             else:
                 user.identification = data.get("identification")
 
-        elif data.get("description", None) is not None:
+        if data.get("description", None) is not None:
             print(data.get("description"))
             user.description = data.get("description")
 
-        elif data.get("first_name", None) is not None:
+        if data.get("first_name", None) is not None:
             print(data.get("first_name"))
             user.first_name = data.get("first_name")
 
-        elif data.get("last_name", None) is not None:
+        if data.get("last_name", None) is not None:
             print(data.get("last_name"))
             user.last_name = data.get("last_name")
 
