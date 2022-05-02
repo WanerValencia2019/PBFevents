@@ -303,14 +303,19 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
             if not file_image:
                 return Response({"message": ["La imagén no es válida"]}, status=status.HTTP_400_BAD_REQUEST)
            
-            print(file_image)
-
             main_image = Image()
             main_image.image.save(event.slug + "_main.jpg", file_image, save=False)
             main_image.save()
 
             event.image = main_image
             event.save()
+
+            for ticket in tickets:
+                ticket["event"] = event.id
+                ticket["availables"] = ticket.get("quantity", 0)
+                ticket_type = CreateTicketTypeSerializer(data=ticket, context={"request": request})
+                ticket_type.is_valid(raise_exception=True)
+                ticket_type.save()
 
 
         except Exception as e:
