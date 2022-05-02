@@ -81,7 +81,7 @@ class UserView(ViewSet):
 
     @action(detail=False, methods=["PUT", "POST"], name="update profile", url_path="update_profile")
     def update_user_profile(self, request, *args, **kwargs):
-        user: CustomUser = self.get_queryset()
+        user: CustomUser = self.request.user
         data: dict = request.data
         if data.get("identification"):
             identification_exist = CustomUser.objects.filter(
