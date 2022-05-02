@@ -298,11 +298,19 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
             if not event:
                 return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
 
-            file = get_binary_content(images.get("mainImage"))
+            file_image = get_binary_content(images.get("mainImage"))
 
-            if not file:
+            if not file_image:
                 return Response({"message": ["La imagén no es válida"]}, status=status.HTTP_400_BAD_REQUEST)
+           
+            print(file_image)
 
+            main_image = Image()
+            main_image.image.save(event.slug + "_main.jpg", file_image, save=False)
+            main_image.save()
+
+            event.image = main_image
+            event.save()
 
 
         except Exception as e:
