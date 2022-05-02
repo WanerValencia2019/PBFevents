@@ -86,15 +86,17 @@ class UserView(ViewSet):
         if data.get("identification"):
             identification_exist = CustomUser.objects.filter(
                 identification__exact=data.get("identification")).distinct().exists()
-            if identification_exist:
-                return Response({"message": ["La identificación no es válida"]}, status.HTTP_400_BAD_REQUEST)
+            if user.identification == data.get("identification"):
+                pass
+            elif identification_exist and user.identification != data.get("identification"):
+                return Response({"message": "La identificación ya existe"}, status=status.HTTP_400_BAD_REQUEST)
             user.identification = data.get("identification")
         elif data.get("description"):
             user.description = data.get("description")
         elif data.get("first_name"):
-            user.description = data.get("first_name")
+            user.first_name = data.get("first_name")
         elif data.get("last_name"):
-            user.description = data.get("last_name")
+            user.last_name = data.get("last_name")
 
         user.save()
         user_data = UserSerializer(user, context={"request": request}).data

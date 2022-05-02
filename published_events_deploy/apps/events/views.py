@@ -317,12 +317,7 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
                 ticket_type.is_valid(raise_exception=True)
                 ticket_type.save()
 
-
-        except Exception as e:
-            
-            return Response({"message": e.args}, status=status.HTTP_400_BAD_REQUEST)
-
-        #serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
-        #serialized_data.is_valid(raise_exception=True)
-        #event:Event = serialized_data.save()
-        return  Response({"data":"JEFE"}, status=status.HTTP_200_OK)
+            new_event_serialized = EventInfoSerializer(instance=event, many=False, context={"request": request}).data
+            return Response({"data": new_event_serialized}, status=status.HTTP_200_OK)
+        except Exception as e:   
+            return Response({"message": [e.args]}, status=status.HTTP_400_BAD_REQUEST)
