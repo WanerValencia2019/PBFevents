@@ -90,7 +90,8 @@ class UserView(ViewSet):
                 pass
             elif identification_exist and user.identification != data.get("identification"):
                 return Response({"message": "La identificación ya existe"}, status=status.HTTP_400_BAD_REQUEST)
-            user.identification = data.get("identification")
+            else:
+                user.identification = data.get("identification")
         elif data.get("description"):
             user.description = data.get("description")
         elif data.get("first_name"):
