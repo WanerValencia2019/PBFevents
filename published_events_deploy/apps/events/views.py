@@ -282,7 +282,7 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
                 "longitude": all_data.get("longitude"),
                 "sell_limit_date": all_data.get("sell_limit_date"),
                 "space_available": all_data.get("space_available"),
-                "addres": all_data.get("addres"),
+                "address": all_data.get("address"),
                 "categories": all_data.get("categories"),
             }
 
