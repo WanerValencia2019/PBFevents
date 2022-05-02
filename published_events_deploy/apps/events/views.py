@@ -295,6 +295,15 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
             serialized_data.is_valid(raise_exception=True)
             event:Event = serialized_data.save()
 
+            if not event:
+                return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
+
+            file = get_binary_content(images.get("mainImage"))
+
+            if not file:
+                return Response({"message": ["La imagén no es válida"]}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
         except Exception as e:
             
