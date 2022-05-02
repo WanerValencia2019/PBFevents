@@ -81,9 +81,10 @@ class UserView(ViewSet):
 
     @action(detail=False, methods=["PUT", "POST"], name="update profile", url_path="update_profile")
     def update_user_profile(self, request, *args, **kwargs):
-        user: CustomUser = self.request.user
+        user: CustomUser = self.get_queryset()
         data: dict = request.data
-        if data.get("identification"):
+        print(data)
+        if data.get("identification", None) is not None:
             identification_exist = CustomUser.objects.filter(
                 identification__exact=data.get("identification")).distinct().exists()
             if user.identification == data.get("identification"):
@@ -92,12 +93,17 @@ class UserView(ViewSet):
                 return Response({"message": "La identificación ya existe"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 user.identification = data.get("identification")
-        elif data.get("description"):
+
+        elif data.get("description", None) is not None:
             user.description = data.get("description")
-        elif data.get("first_name"):
+
+        elif data.get("first_name", None) is not None:
             user.first_name = data.get("first_name")
-        elif data.get("last_name"):
+
+        elif data.get("last_name", None) is not None:
             user.last_name = data.get("last_name")
+
+        print("ENTONCES ", user)
 
         user.save()
         user_data = UserSerializer(user, context={"request": request}).data
