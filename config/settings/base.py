@@ -75,6 +75,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     'rest_framework_simplejwt',
     'django_rest_passwordreset',
+    "django_dropbox_storage",
 ]
 
 LOCAL_APPS = [
