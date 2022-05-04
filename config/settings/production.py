@@ -94,6 +94,10 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 #DEFAULT_FILE_STORAGE = "published_events_deploy.utils.storages.MediaRootS3Boto3Storage"
 #MEDIA_URL = f"https://{aws_s3_domain}/media/"
 
+MEDIA_ROOT = str(APPS_DIR / "media")
+# https://docs.djangoproject.com/en/dev/ref/settings/#media-url
+MEDIA_URL = "/media/"
+
 
 #DROPBOX CONFIG
 DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
