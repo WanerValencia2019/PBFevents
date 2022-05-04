@@ -100,7 +100,7 @@ MEDIA_URL = "/media/"
 
 
 #DROPBOX CONFIG
-DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+DEFAULT_FILE_STORAGE = 'django_dropbox_storage.storage.DropboxStorage'
 DROPBOX_OAUTH2_TOKEN = env('DROPBOX_OAUTH2_TOKEN')
 DROPBOX_ACCESS_TOKEN = env('DROPBOX_ACCESS_TOKEN')
 DROPBOX_CONSUMER_KEY=env('DROPBOX_CONSUMER_KEY')
