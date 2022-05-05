@@ -9,6 +9,8 @@ from sentry_sdk.integrations.redis import RedisIntegration
 from .base import *  # noqa
 from .base import env
 
+import os
+
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
@@ -94,9 +96,8 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 #DEFAULT_FILE_STORAGE = "published_events_deploy.utils.storages.MediaRootS3Boto3Storage"
 #MEDIA_URL = f"https://{aws_s3_domain}/media/"
 
-MEDIA_ROOT = str(APPS_DIR / "media")
-# https://docs.djangoproject.com/en/dev/ref/settings/#media-url
-MEDIA_URL = "/media/"
+MEDIA_URL = '/media/'
+STATICFILES_DIRS = os.path.join(BASE_DIR,'media')
 
 
 #DROPBOX CONFIG
