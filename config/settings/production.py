@@ -90,7 +90,7 @@ AWS_S3_CUSTOM_DOMAIN = env("DJANGO_AWS_S3_CUSTOM_DOMAIN", default=None)
 aws_s3_domain = AWS_S3_CUSTOM_DOMAIN or f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 # STATIC
 # ------------------------
-#STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # MEDIA
 # ------------------------------------------------------------------------------
 #DEFAULT_FILE_STORAGE = "published_events_deploy.utils.storages.MediaRootS3Boto3Storage"
@@ -100,8 +100,7 @@ MEDIA_URL = '/media/'
 
 
 #DROPBOX CONFIG
-DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
-STATICFILES_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+DEFAULT_FILE_STORAGE = 'django_dropbox_storage.storage.DropboxStorage'
 DROPBOX_OAUTH2_TOKEN = env('DROPBOX_OAUTH2_TOKEN')
 DROPBOX_ACCESS_TOKEN = env('DROPBOX_ACCESS_TOKEN')
 DROPBOX_CONSUMER_KEY = env('DROPBOX_CONSUMER_KEY')
