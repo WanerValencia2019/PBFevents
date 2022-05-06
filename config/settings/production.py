@@ -97,10 +97,10 @@ aws_s3_domain = AWS_S3_CUSTOM_DOMAIN or f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws
 #MEDIA_URL = f"https://{aws_s3_domain}/media/"
 
 MEDIA_URL = '/media/'
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'media'),)
 
 
 #DROPBOX CONFIG
+DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 STATICFILES_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 DROPBOX_OAUTH2_TOKEN = env('DROPBOX_OAUTH2_TOKEN')
 DROPBOX_ACCESS_TOKEN = env('DROPBOX_ACCESS_TOKEN')
