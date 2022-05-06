@@ -200,7 +200,7 @@ class ListEvents(ViewSetMixin, ListAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset().order_by("-sell_limit_date")
+        queryset = self.get_queryset().order_by("sell_limit_date")
         serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
         return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
 
@@ -213,7 +213,7 @@ class NearEvents(ViewSetMixin, ListAPIView):
         current_latitude = self.request.query_params.get('latitude', 0.0)
         current_longitude = self.request.query_params.get('longitude', 0.0)
 
-        events = Event.objects.all().filter(sell_limit_date__gte=datetime.now()) .order_by("start_date")
+        events = Event.objects.all().filter(sell_limit_date__gte=datetime.now()).order_by("sell_limit_date")
         near_events = []
         minimun_distance = 50
         for event in events:
@@ -286,6 +286,8 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
                 "categories": all_data.get("categories"),
             }
 
+            print(info_data)
+
             if not images.get("mainImage"):
                 return Response({
                     "message": ["La imagen pricipal es requerida"]
@@ -298,13 +300,8 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
             if not event:
                 return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
 
-            file_image = get_binary_content(images.get("mainImage"))
-
-            if not file_image:
-                return Response({"message": ["La imagén no es válida"]}, status=status.HTTP_400_BAD_REQUEST)
-           
             main_image = Image()
-            main_image.image.save(event.slug + "_main.jpg", file_image, save=False)
+            main_image.image = images.get("mainImage")
             main_image.save()
 
             event.image = main_image
