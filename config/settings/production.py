@@ -97,7 +97,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 #MEDIA_URL = f"https://{aws_s3_domain}/media/"
 
 MEDIA_URL = '/media/'
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'media'),)
+STATICFILES_DIRS = (os.path.join(Path(__file__).resolve(strict=True).parent.parent, 'media'),)
 
 
 #DROPBOX CONFIG
