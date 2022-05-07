@@ -72,7 +72,7 @@ class GeneratePaymentView(APIView):
         transaction = create_transaction("1128024080", ticket_type, 4, payment_result)
         print(transaction)"""
 
-        next_url = settings.API_LOCAL_BASE_URL + f"/payment/confirm?account_id={account_id}&merchant_id={merchant_id}&reference_code={reference_code}&amount={amount}&money={currency}&buyer_full_name={buyer_full_name}&email={email}&phone={phone}&test={test}&tax={tax}&tax_return_base={tax_return_base}&description={description}&payment_signature={payment_signature}&algorithm_signature={algorithm_signature}&confirm_url={confirm_url}&response_url={response_url}".replace(
+        next_url = settings.API_PRODUCTION_BASE_URL + f"/payment/confirm?account_id={account_id}&merchant_id={merchant_id}&reference_code={reference_code}&amount={amount}&money={currency}&buyer_full_name={buyer_full_name}&email={email}&phone={phone}&test={test}&tax={tax}&tax_return_base={tax_return_base}&description={description}&payment_signature={payment_signature}&algorithm_signature={algorithm_signature}&confirm_url={confirm_url}&response_url={response_url}".replace(
             " ", "%20")
 
         return Response({"message": "Orden creada con éxito", "next_url": next_url}, status=200)

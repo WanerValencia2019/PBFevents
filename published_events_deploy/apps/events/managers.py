@@ -20,7 +20,7 @@ class TicketTypeManager(Manager):
 
     def get_ticket_types(self, event_id) -> list or None:
         try:
-            self.get_queryset().filter(event=event_id)
+            self.get_queryset().filter(event__id=event_id)
             ticket_types = []
             return ticket_types
         except ObjectDoesNotExist as ex:
