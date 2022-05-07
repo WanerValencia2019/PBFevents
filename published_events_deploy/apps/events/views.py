@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from django.db.transaction import atomic
 
-from published_events_deploy.apps.events.models import Event, Category
+from published_events_deploy.apps.events.models import Event, Category, TicketType
 from published_events_deploy.apps.events.serializers import CategorySerializer, EventInfoSerializer, EventCreateSerializer, \
     CreateTicketTypeSerializer, TicketTypeSerializer
 from published_events_deploy.apps.multimedia.models import Image
@@ -247,7 +247,12 @@ class DetailEvent(ViewSetMixin, RetrieveAPIView):
         queryset = self.get_queryset()
         print("Hello")
         serialized_data = self.get_serializer_class()(instance=queryset, context={"request": request})
-        return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
+        tickets = TicketType.objects.get_ticket_types(queryset.id)
+        tickets_serialized = TicketTypeSerializer(instance=tickets, many=True, context={"request": request}).data
+        data = serialized_data.data
+        data["tickets"]=tickets_serialized
+        
+        return Response({"data": data}, status=status.HTTP_200_OK)
 
 
 

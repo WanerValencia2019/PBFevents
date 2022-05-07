@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from slugify import slugify
 
-from published_events_deploy.apps.events.managers import EventManager
+from published_events_deploy.apps.events.managers import EventManager, TicketTypeManager
 from published_events_deploy.apps.multimedia.models import Image
 
 User = get_user_model()
@@ -42,6 +42,7 @@ class TicketType(models.Model):
     availables = models.IntegerField(default=0, verbose_name="Espacios disponibles para esta entrada")
     ticket_sales = models.IntegerField(default=0, verbose_name="Tickets vendidos", blank=True)
     event = models.ForeignKey("events.Event", on_delete=models.CASCADE, related_name="ticket_type_event")
+    objects = TicketTypeManager()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
