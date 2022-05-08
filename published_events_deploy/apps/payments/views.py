@@ -1,4 +1,5 @@
 import hashlib
+from uuid import uuid4
 
 from django.conf import settings
 from django.shortcuts import render
@@ -55,22 +56,22 @@ class GeneratePaymentView(APIView):
         currency = "COP"
         tax_return_base = 0
         tax = 0
-        reference_code = ticket_id.upper()
+        reference_code = ticket_id.upper()[0:10]+uuid4().hex[0:10]
         description = f"Compra de {ticket_quantity} entradas {ticket_type.name} para el evento '{ticket_type.event.title}'"
         test = "0"
         payment_signature = hashlib.md5(
             f"{api_key}~{merchant_id}~{reference_code}~{amount}~{currency}".encode()).hexdigest()
 
-        """payment_result = {
-            "status": "PAYED",
-            "email" :"valenciawaner@gmail.com",
-            "buyer_full_name":"Waner Valencia",
-            "phone" : "3205959194",
-            "amount": 500000 * 4,
+        payment_result = {
+            "status": "CREATED",
+            "email" : email,
+            "buyer_full_name":buyer_full_name,
+            "phone" : phone,
+            "amount": amount,
             "identification": "1128024080"
         }
-        transaction = create_transaction("1128024080", ticket_type, 4, payment_result)
-        print(transaction)"""
+        transaction = create_transaction("1128024080", ticket_type, ticket_quantity, payment_result)
+        print(transaction)
 
         next_url = settings.API_PRODUCTION_BASE_URL + f"/payment/confirm?account_id={account_id}&merchant_id={merchant_id}&reference_code={reference_code}&amount={amount}&money={currency}&buyer_full_name={buyer_full_name}&email={email}&phone={phone}&test={test}&tax={tax}&tax_return_base={tax_return_base}&description={description}&payment_signature={payment_signature}&algorithm_signature={algorithm_signature}&confirm_url={confirm_url}&response_url={response_url}".replace(
             " ", "%20")

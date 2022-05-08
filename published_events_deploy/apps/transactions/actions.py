@@ -16,7 +16,11 @@ def create_transaction(user_identification:str, ticket_type:TicketType, ticket_a
     transaction.ticket_type = ticket_type
     transaction.ticket_amount = ticket_amount
 
-    if payment_result.get('status') == "PAYED":
+
+    if payment_result.get('status') == "CREATED":
+        transaction.status = TransactionStatus.CREATED
+
+    elif payment_result.get('status') == "PAYED":
         transaction.status = TransactionStatus.PAYED
         user = ticket_type.event.created_by
         ticket_type.ticket_sales += ticket_amount
