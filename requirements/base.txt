@@ -38,3 +38,4 @@ mercadopago==2.0.10
 
 django-filter
 
+django-anymail[sendgrid]==8.5  # https://github.com/anymail/django-anymail

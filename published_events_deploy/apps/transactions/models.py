@@ -18,7 +18,9 @@ class Transaction(models.Model):
     user_identification = models.CharField(max_length=12)
     ticket_type = models.ForeignKey(TicketType,verbose_name="Ticket de la transacción", on_delete=models.RESTRICT)
     ticket_amount = models.IntegerField(default=1)
+    total_price = models.FloatField(default=0.0)
     status = models.CharField(max_length=50,choices=choices,default=TransactionStatus.CREATED)
+    meta_data = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

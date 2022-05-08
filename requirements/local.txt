@@ -38,5 +38,4 @@ django-coverage-plugin==2.0.2  # https://github.com/nedbat/django_coverage_plugi
 pytest-django==4.5.2  # https://github.com/pytest-dev/pytest-django
 
 
-#django-dropbox-storage-fixed   #https://github.com/Liqudity2provider/django-dropbox-storage-fixed
-#django-storages[dropbox]
+django-anymail[sendgrid]==8.5  # https://github.com/anymail/django-anymail

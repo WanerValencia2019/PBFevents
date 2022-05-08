@@ -11,8 +11,9 @@ from rest_framework import status
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from published_events_deploy.apps.transactions.actions import create_transaction
+from published_events_deploy.apps.transactions.actions import cancel_transaction, create_transaction, pay_transaction
 from published_events_deploy.apps.events.models import TicketType
+from published_events_deploy.apps.transactions.models import Transaction
 
 
 class GeneratePaymentView(APIView):
@@ -29,6 +30,7 @@ class GeneratePaymentView(APIView):
         phone = data.get("phone", None)
         ticket_id: str = data.get("ticket_type_id", None)
         ticket_quantity: int = data.get("ticket_quantity", None)
+        identification:str = data.get("identification", None) 
 
         if not email:
             return Response({"message": "email es requerido"}, status=status.HTTP_400_BAD_REQUEST)
@@ -56,7 +58,7 @@ class GeneratePaymentView(APIView):
         currency = "COP"
         tax_return_base = 0
         tax = 0
-        reference_code = ticket_id.upper()[0:10]+uuid4().hex[0:10]
+        reference_code = ticket_id.upper()[0:12]+uuid4().hex[0:12]
         description = f"Compra de {ticket_quantity} entradas {ticket_type.name} para el evento '{ticket_type.event.title}'"
         test = "0"
         payment_signature = hashlib.md5(
@@ -67,13 +69,15 @@ class GeneratePaymentView(APIView):
             "email" : email,
             "buyer_full_name":buyer_full_name,
             "phone" : phone,
+            "ticket_quantity": ticket_quantity,
             "amount": amount,
-            "identification": "1128024080"
+            "identification": identification,
+            "reference_code": reference_code,
         }
-        transaction = create_transaction("1128024080", ticket_type, ticket_quantity, payment_result)
+        transaction = create_transaction(identification, ticket_type, ticket_quantity, payment_result)
         print(transaction)
 
-        next_url = settings.API_PRODUCTION_BASE_URL + f"/payment/confirm?account_id={account_id}&merchant_id={merchant_id}&reference_code={reference_code}&amount={amount}&money={currency}&buyer_full_name={buyer_full_name}&email={email}&phone={phone}&test={test}&tax={tax}&tax_return_base={tax_return_base}&description={description}&payment_signature={payment_signature}&algorithm_signature={algorithm_signature}&confirm_url={confirm_url}&response_url={response_url}".replace(
+        next_url = settings.API_IP_LOCAL + f"/payment/confirm?account_id={account_id}&merchant_id={merchant_id}&reference_code={reference_code}&amount={amount}&money={currency}&buyer_full_name={buyer_full_name}&email={email}&phone={phone}&test={test}&tax={tax}&tax_return_base={tax_return_base}&description={description}&payment_signature={payment_signature}&algorithm_signature={algorithm_signature}&confirm_url={confirm_url}&response_url={response_url}".replace(
             " ", "%20")
 
         return Response({"message": "Orden creada con éxito", "next_url": next_url}, status=200)
@@ -98,9 +102,16 @@ class PaymentView(View):
 class PaymentConfirmPayu(View):
     def get(self, request, *args, **kwargs):
         data = request.GET
-        return render(request, 'payment/payu_confirm.html', context={"pay": data})
-
-
+        transaction = Transaction.objects.filter(id=data.get("referenceCode")).select_related("ticket_type").first()
+        STATUS = data.get("lapResponseCode")
+        print(transaction)
+        print(data.get("referenceCode"))
+        if STATUS == "APPROVED":
+            pay_transaction(transaction)
+            return render(request, 'payment/payu_confirm.html', context={"pay": data})
+        else:
+            cancel_transaction(transaction)
+            return render(request, 'payment/payment_error.html', context={"pay": data})
 class PaymentResponsePayu(View):
     def get(self, request, *args, **kwargs):
         data = request.GET
