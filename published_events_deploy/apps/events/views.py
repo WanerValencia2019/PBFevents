@@ -19,6 +19,7 @@ from published_events_deploy.apps.multimedia.models import Image
 from published_events_deploy.apps.multimedia.serializers import ImageSerializer
 from published_events_deploy.apps.utils import get_binary_content
 from published_events_deploy.utils.all import get_point_distance
+from published_events_deploy.utils.mails import send_ticket_mail
 
 class EventView(ViewSet):
     serializer_class = EventInfoSerializer

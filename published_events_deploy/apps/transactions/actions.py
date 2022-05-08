@@ -1,3 +1,4 @@
+import threading
 from uuid import uuid4
 from published_events_deploy.apps.transactions.models import Transaction, TransactionStatus
 from published_events_deploy.apps.sales_profile.models import SaleProfile
@@ -5,6 +6,8 @@ from published_events_deploy.apps.events.models import TicketType, Assistant
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.db import transaction
+
+from published_events_deploy.utils.mails import send_ticket_mail
 
 """
 payment_result -> {
@@ -40,7 +43,7 @@ def create_transaction(user_identification:str, ticket_type:TicketType, ticket_a
     return transaction
 
 @transaction.atomic
-def pay_transaction(transaction:Transaction) -> Transaction:
+def pay_transaction(transaction:Transaction) -> any:
     transaction.status = TransactionStatus.PAYED
     transaction.save()
 
@@ -70,7 +73,7 @@ def pay_transaction(transaction:Transaction) -> Transaction:
         sale_profile.amount_available += float(transaction.total_price)
         sale_profile.save()
 
-    return transaction
+    return transaction, assistant
 
 def cancel_transaction(transaction:Transaction) -> Transaction:
     transaction.status = TransactionStatus.CANCELED

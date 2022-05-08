@@ -1,4 +1,5 @@
 import hashlib
+import threading
 from uuid import uuid4
 
 from django.conf import settings
@@ -14,6 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from published_events_deploy.apps.transactions.actions import cancel_transaction, create_transaction, pay_transaction
 from published_events_deploy.apps.events.models import TicketType
 from published_events_deploy.apps.transactions.models import Transaction
+from published_events_deploy.utils.mails import send_ticket_mail
 
 
 class GeneratePaymentView(APIView):
@@ -107,7 +109,9 @@ class PaymentConfirmPayu(View):
         print(transaction)
         print(data.get("referenceCode"))
         if STATUS == "APPROVED":
-            pay_transaction(transaction)
+            transaction_recover, assistant = pay_transaction(transaction)
+            if transaction_recover and assistant:
+                threading.Thread(target=send_ticket_mail, args=(transaction_recover.ticket_type.event, assistant, transaction_recover)).start()
             return render(request, 'payment/payu_confirm.html', context={"pay": data})
         else:
             cancel_transaction(transaction)
