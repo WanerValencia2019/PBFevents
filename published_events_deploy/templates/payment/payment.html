@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <div style="display: flex;justify-content: center; align-items: center;">
+  <div style="display: flex;justify-content: center; align-items: center; height: 100vh;">
     <form id="form_buy" method="post" action="{{ pay.action }}">
       <input name="merchantId" type="hidden" value="{{ pay.merchant_id }}">
       <input name="accountId" type="hidden" value="{{ pay.account_id }}">
@@ -28,7 +28,7 @@
       <input name="confirmationUrl" type="hidden" value="{{ pay.confirm_url }}">
       <input name="buyerFullName" type="hidden" value={{ pay.buyer_full_name }}>
       <input name="telephone" type="hidden" value="{{ pay.phone }}">
-      <input style="padding: 10px;background-color: #376AED; outline: none; border: none;" id="btn_submit" name="Submit" type="submit" value="Ir a pagar">
+      <input style="padding: 20px;background-color: #376AED; border: none;" id="btn_submit" name="Submit" type="submit" value="Ir a pagar">
     </form>
   </div>
   <script type="text/javascript">
@@ -36,7 +36,7 @@
     //   document.getElementById("form_buy").submit();
     //   document.getElementById("btn_submit").click();
     // })
-    document.getElementById("form_buy").submit();
+    //document.getElementById("form_buy").submit();
   </script>
 </body>
 
