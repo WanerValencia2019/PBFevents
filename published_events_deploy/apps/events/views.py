@@ -12,8 +12,8 @@ from rest_framework.response import Response
 from django.db.models import Q
 from django.db.transaction import atomic
 
-from published_events_deploy.apps.events.models import Event, Category, TicketType
-from published_events_deploy.apps.events.serializers import CategorySerializer, EventInfoSerializer, EventCreateSerializer, \
+from published_events_deploy.apps.events.models import Assistant, Event, Category, TicketType
+from published_events_deploy.apps.events.serializers import AssistantSerializer, CategorySerializer, EventInfoSerializer, EventCreateSerializer, \
     CreateTicketTypeSerializer, TicketTypeSerializer
 from published_events_deploy.apps.multimedia.models import Image
 from published_events_deploy.apps.multimedia.serializers import ImageSerializer
@@ -173,12 +173,14 @@ class EventView(ViewSet):
     @action(methods=["GET"], url_name="get assistants by event", url_path="assistants", detail=True)
     def get_assistants_by_event(self, request, *args, **kwargs):
         pk = kwargs.get("pk")
-        event = Event.objects.get_assistants(id=pk)
 
-        if event is None:
-            return Response({"message": "Este evento no ha sido encontrado"}, status.HTTP_404_NOT_FOUND)
+        if not Event.objects.filter(id=pk).exists():
+            return Response({"message": ["Este evento no está disponible"]}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response({"data": ""}, status=status.HTTP_200_OK)
+        assistans = Assistant.objects.filter(ticket__event__id=pk)
+        serialized_data = AssistantSerializer(assistans, many=True, context={"request": request}).data
+
+        return Response({"data": serialized_data}, status=status.HTTP_200_OK)
 
 
 class ListEvents(ViewSetMixin, ListAPIView):

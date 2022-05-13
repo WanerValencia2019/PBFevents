@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError, NotFound
 
-from published_events_deploy.apps.events.models import Category, TicketType, Event
+from published_events_deploy.apps.events.models import Assistant, Category, TicketType, Event
 from published_events_deploy.apps.users.serializers import UserSerializer, PublicUserSerializer
 
 from published_events_deploy.apps.multimedia.serializers import ImageSerializer
@@ -120,3 +120,10 @@ class CreateTicketTypeSerializer(serializers.Serializer):
                 {"message": "La cantidad de entradas supera los tickets disponibles en el evento ({} > {})".format(
                     availables, event.space_available)})
         return data
+
+
+class AssistantSerializer(serializers.ModelSerializer):
+    ticket = TicketTypeSerializer(many=False, read_only=True)
+    class Meta:
+        model = Assistant
+        fields = ['id', "full_name","email", "phone","identification","ticket","ticket_quantity","security_code"]
