@@ -44,7 +44,7 @@ class GeneratePaymentView(APIView):
             return Response({"message": "ticket_type_id es requerido"}, status=status.HTTP_400_BAD_REQUEST)
         elif not ticket_quantity:
             return Response({"message": "ticket_quantity es requerido"}, status=status.HTTP_400_BAD_REQUEST)
-
+        print("Que hace?")
         amount = None
         ticket_type: TicketType = None
         try:
