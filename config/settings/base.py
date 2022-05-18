@@ -339,12 +339,12 @@ PAYU_API_KEY = "4Vj8eK4rloUd272L48hsrarnUA"
 PAYU_PUBLIC_KEY = "PKaC6H4cEDJD919n705L544kSU"
 PAYU_MERCHANT_ID = "508029"
 PAYU_ACCOUNT_ID = "512321"
-PAYU_RESPONSE_URL = "https://192.168.1.16:8000/published_events_deploy/api/payment/payu/response"
-PAYU_CONFIRM_URL = "https://192.168.1.16:8000/published_events_deploy/api/payment/payu/confirm"
+PAYU_RESPONSE_URL = "https://published-events.herokuapp.com/published_events_deploy/api/payment/payu/response"
+PAYU_CONFIRM_URL = "https://published-events.herokuapp.com/published_events_deploy/api/payment/payu/confirm"
 PAYU_BASE_URL = "https://checkout.payulatam.com/ppp-web-gateway-payu/"
 PAYU_TEST_URL = "https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/"
 
 API_IP_LOCAL = "http://192.168.1.16:8000/published_events_deploy/api"
 API_LOCAL_BASE_URL = "http://localhost:8000/published_events_deploy/api"
 API_PRODUCTION_BASE_URL = "https://published-events.herokuapp.com/published_events_deploy/api"
-
+ 
