@@ -1,9 +1,9 @@
-from datetime import datetime
 import hashlib
 import threading
 from uuid import uuid4
 
 
+from django.utils import timezone
 from django.conf import settings
 from django.shortcuts import render
 from django.views import View
@@ -54,7 +54,7 @@ class GeneratePaymentView(APIView):
 
             event:Event = ticket_type.event
 
-            if(event.sell_limit_date < datetime.now()):
+            if(event.sell_limit_date < timezone.now()):
                 return Response({"message": "El evento ya no esta disponible para la venta"}, status=status.HTTP_400_BAD_REQUEST)
 
             if not (ticket_type.availables - ticket_type.ticket_sales) >= ticket_quantity:
@@ -162,7 +162,7 @@ class PayFreeEvent(APIView):
 
             event:Event = ticket_type.event
 
-            if(event.sell_limit_date < datetime.now()):
+            if(event.sell_limit_date < timezone.now()):
                 return Response({"message": "El evento ya no esta disponible para la venta"}, status=status.HTTP_400_BAD_REQUEST)
             
             if not ticket_type.unit_price == 0:
