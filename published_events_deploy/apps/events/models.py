@@ -46,9 +46,9 @@ class TicketType(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def update_space_availables_on_event(self):
-        self.event.space_available = self.event.space_available - self.availables
-        self.event.save()
+    #def update_space_availables_on_event(self):
+    #    self.event.space_available = self.event.space_available - self.availables
+    #    self.event.save()
 
     def __str__(self):
         return self.name
@@ -64,9 +64,9 @@ def set_uuid(instance, *args, **kwargs):
         instance.id = uuid.uuid4().hex
 
 
-@receiver(post_save, sender=TicketType)
-def set_uuid(instance, *args, **kwargs):
-    instance.update_space_availables_on_event()
+#@receiver(post_save, sender=TicketType)
+#def set_uuid(instance, *args, **kwargs):
+#    instance.update_space_availables_on_event()
 
 
 class Event(models.Model):

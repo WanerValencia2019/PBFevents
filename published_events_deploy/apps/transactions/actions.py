@@ -58,7 +58,7 @@ def pay_transaction(transaction:Transaction) -> any:
     assistant.phone = transaction.meta_data.get("phone", None)
     assistant.identification = transaction.meta_data.get("identification", None)
     assistant.ticket = ticket_type
-    assistant.security_code = str(transaction.meta_data.get("identification", "")).upper() + "-" + str(transaction.id)[0:6].upper()
+    assistant.security_code = str(transaction.meta_data.get("identification", "")).upper() + "-" + str(uuid4().hex)[0:8].upper()
     assistant.ticket_quantity = transaction.ticket_amount
 
     assistant.save()

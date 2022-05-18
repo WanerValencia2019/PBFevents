@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet, ViewSetMixin
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -39,52 +40,6 @@ class EventView(ViewSet):
         return Response({
             "data": events.data
         }, status=status.HTTP_200_OK)
-
-    def create(self, request, *args, **kwargs):
-        #first_data = request.data
-        #images:dict = request.data.get("images")
-        #tickets:list = request.data.get("tickets")
-
-        print("ENTRADA NUMEROS")
-
-        #if not images.get("mainImage"):
-        #    print("ENTRADA DOS")
-        #    return Response({
-        #        "message": ["La imagen pricipal es requerida"]
-        #    }, status=status.HTTP_400_BAD_REQUEST)
-
-        #serialized_data = EventCreateSerializer(data=first_data, context={"request": request})
-        #serialized_data.is_valid(raise_exception=True)
-        #event:Event = serialized_data.save()
-
-        print("ENTRADA 3")
-
-        #if not event:
-        #    return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
-        
-        ##file = get_binary_content(images.get("mainImage"))
-
-        #if not file:
-        #        return Response({"message": ["La imagén no es válida"]}, status=status.HTTP_400_BAD_REQUEST)
-
-        ###main_image = Image()
-        ###main_image.image.save(event.slug + "_main.jpg", file, save=False)
-        ###main_image.save()
-
-        ###event.image = main_image
-        ####event.save()
-
-        #for ticket in tickets:
-        #    ticket["event"] = event.id
-        #    ticket["availables"] = ticket.get("quantity", 0)
-        #    ticket_type = CreateTicketTypeSerializer(data=ticket, context={"request": request})
-        #    ticket_type.is_valid(raise_exception=True)
-        #    ticket_type.save()
-
-        
-        #new_event_serialized = EventInfoSerializer(instance=event, many=False, context={"request": request}).data
-
-        return Response({"message":["Evento creado satisfactoriamente"],"data": "Hello"}, status=status.HTTP_201_CREATED)
 
     @action(methods=["POST"], url_name="create new event", url_path="new", detail=False)
     def create_event(self, request, *args, **kwargs): 
@@ -325,4 +280,34 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
             new_event_serialized = EventInfoSerializer(instance=event, many=False, context={"request": request}).data
             return Response({"data": new_event_serialized}, status=status.HTTP_200_OK)
         except Exception as e:   
+            return Response({"message": [e.args]}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerifyAssistant(ViewSetMixin, ListAPIView):
+
+    def list(self, request, *args, **kwargs):
+        
+        try:
+            data = request.query_params
+            code = data.get('code', None)
+
+            if not code:
+                return Response({"message": ["code param is required"]}, status=status.HTTP_400_BAD_REQUEST)
+
+            if len(code) < 8:
+                return Response({"message": ["código no válido"]}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                assistant = Assistant.objects.filter(security_code__icontains=code).first()
+
+                if not assistant:
+                    return Response({"message": ["Código no válido"]}, status=status.HTTP_400_BAD_REQUEST)
+
+                assistant_serialized = AssistantSerializer(instance=assistant, many=False, context={"request": request}).data
+                return Response({"data": assistant_serialized}, status=status.HTTP_200_OK)
+            except Exception as ex:
+                print(ex.args)
+                return Response({"message": ["código no válido"]}, status=status.HTTP_400_BAD_REQUEST)
+            
+        except Exception as e:
             return Response({"message": [e.args]}, status=status.HTTP_400_BAD_REQUEST)
