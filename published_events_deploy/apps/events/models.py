@@ -118,7 +118,7 @@ class Assistant(models.Model):
     identification = models.CharField(max_length=12, verbose_name="Identificación")
     ticket = models.ForeignKey(TicketType,verbose_name="Ticker(Entrada)", on_delete=models.RESTRICT)
     ticket_quantity = models.IntegerField(default=1, verbose_name="Cantidad de tickets")
-    security_code = models.CharField(max_length=19, verbose_name="Codigo de seguridad", blank=True, null=True)
+    security_code = models.CharField(max_length=50, verbose_name="Codigo de seguridad", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
