@@ -21,8 +21,6 @@ class TicketTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TicketType
         exclude = ["created_at", "updated_at"]
-
-
 class EventInfoSerializer(serializers.ModelSerializer):
     created_by = PublicUserSerializer(read_only=True)
     categories = CategorySerializer(many=True, read_only=True)
@@ -37,6 +35,17 @@ class EventInfoSerializer(serializers.ModelSerializer):
                   "start_date",
                   "end_date", "latitude", "longitude", "categories"]
 
+
+
+class ShortEventInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ["id", "title", "description", "address", "sell_limit_date","start_date","end_date",]
+class ShortTicketTypeSerializer(serializers.ModelSerializer):
+    event = ShortEventInfoSerializer(read_only=True)
+    class Meta:
+        model = TicketType
+        exclude = ["created_at", "updated_at", "ticket_sales","availables"]
 
 class EventCreateSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=150, required=True)
@@ -124,7 +133,8 @@ class CreateTicketTypeSerializer(serializers.Serializer):
 
 
 class AssistantSerializer(serializers.ModelSerializer):
-    ticket = TicketTypeSerializer(many=False, read_only=True)
+    ticket = ShortTicketTypeSerializer(many=False, read_only=True)
     class Meta:
         model = Assistant
         fields = ['id', "full_name","email", "phone","identification","ticket","ticket_quantity","security_code"]
+
