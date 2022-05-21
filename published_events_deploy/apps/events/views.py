@@ -25,8 +25,8 @@ from published_events_deploy.utils.mails import send_ticket_mail
 class EventView(ViewSet):
     serializer_class = EventInfoSerializer
     model = Event
-    #authentication_classes = [JWTAuthentication]
-    #permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -311,3 +311,21 @@ class VerifyAssistant(ViewSetMixin, ListAPIView):
             
         except Exception as e:
             return Response({"message": [e.args]}, status=status.HTTP_400_BAD_REQUEST)
+
+class MyAssistantsView(ViewSetMixin, ListAPIView):
+    serializer_class = AssistantSerializer
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        identification = self.request.query_params.get("identification", None)
+        assistants = Assistant.objects.filter(identification=identification)
+        return assistants
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if not queryset: 
+            return Response({"message": ["No hay asistencias, verifica tu identificación en el perfil"]}, status=status.HTTP_400_BAD_REQUEST)
+
+        serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
+        return Response({"data": serialized_data.data}, status=status.HTTP_200_OK)
