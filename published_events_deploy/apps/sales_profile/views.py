@@ -1,4 +1,5 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from django.utils import timezone
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -35,3 +36,32 @@ class SaleProfileView(ViewSetMixin, ListAPIView):
             return Response({'message': ['Aún no tienes cuenta de pagos, crea tu primer evento']}, status=404)
 
         
+class WithdrawalView(ViewSetMixin, CreateAPIView):
+    serializer_class = SaleProfileSerializer
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = SaleProfile.objects.all()
+
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        try :
+            sale_profile = SaleProfile.objects.get(user=user)
+            amount_withdrawn = request.data['amount_withdrawn']
+            if amount_withdrawn > sale_profile.amount_available:
+                return Response({'message': ['No tienes suficiente dinero para retirar']}, status=404)
+            else:
+                withdraw = Withdrawal()
+                withdraw.sale_profile = sale_profile
+                withdraw.amount_withdrawn = amount_withdrawn
+                withdraw.save()
+
+                sale_profile.amount_available -= amount_withdrawn
+                sale_profile.amount_retired += amount_withdrawn
+                sale_profile.last_withdraw = timezone.now()
+                sale_profile.save()
+                return Response({'message': ['Retiro realizado']}, status=200)
+                
+            return Response({"data": sale_profile_data},  status=200)
+        except SaleProfile.DoesNotExist:
+            return Response({'message': ['Aún no tienes cuenta de pagos, crea tu primer evento']}, status=404)
