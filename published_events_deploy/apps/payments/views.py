@@ -192,6 +192,8 @@ class PayFreeEvent(APIView):
             return Response({"message": "No se pudo realizar la reserva, contacta al administrador"}, status=status.HTTP_400_BAD_REQUEST)
         
         transaction_recover, assistant = pay_transaction(transaction)
+
+        print(assistant)
         if transaction_recover and assistant:
             threading.Thread(target=send_ticket_mail, args=(transaction_recover.ticket_type.event, assistant, transaction_recover)).start()
 

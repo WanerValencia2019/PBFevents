@@ -63,6 +63,8 @@ def pay_transaction(transaction:Transaction) -> any:
 
     assistant.save()
 
+    print("ASISTENTE CREADO " +assistant)
+
     try:
         sale_profile = SaleProfile.objects.get(user=user)
         sale_profile.amount_available += float(transaction.total_price)
