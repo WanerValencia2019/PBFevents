@@ -31,7 +31,7 @@ class Withdrawal(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{} - {}".format(self.sale_profile.user.username, self.amount_withdrawn)
+        return "{} - {}".format(self.sale_profile.email, self.amount_withdrawn)
 
 
 @receiver(pre_save, sender=Withdrawal)
@@ -58,7 +58,7 @@ class SaleProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user.username
+        return self.user.email
 
 
 @receiver(pre_save, sender=SaleProfile)
