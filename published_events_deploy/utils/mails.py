@@ -25,18 +25,21 @@ def send_ticket_mail(event: Event, assistant: Assistant, transaction: Transactio
         "end_date": event.end_date,
     }
 
-    template = get_template('mails/send_ticket.html')
-    html_content = template.render(context)
+    try:
+        template = get_template('mails/send_ticket.html')
+        html_content = template.render(context)
 
-    msg = EmailMultiAlternatives(
-        # title:
-        "Entrada a el evento {}".format(event.title),
-        # message:
-        html_content,
-        # from:
-        "valenciawaner@gmail.com",
-        # to:
-        ["valenciawaner@gmail.com", assistant.email]
-    )
-    msg.content_subtype = "html"
-    msg.send()
+        msg = EmailMultiAlternatives(
+            # title:
+            "Entrada a el evento {}".format(event.title),
+            # message:
+            html_content,
+            # from:
+            "valenciawaner@gmail.com",
+            # to:
+            ["valenciawaner@gmail.com", assistant.email]
+        )
+        msg.content_subtype = "html"
+        msg.send()
+    except Exception as e:
+        print(e)
