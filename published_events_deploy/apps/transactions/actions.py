@@ -62,9 +62,9 @@ def pay_transaction(transaction:Transaction) -> any:
     assistant.ticket_quantity = transaction.ticket_amount
 
     assistant.save()
-
-    print("ASISTENTE CREADO " +assistant)
-
+    print("assistant saved")
+    print(assistant)
+    print("assistant saved")
     try:
         sale_profile = SaleProfile.objects.get(user=user)
         sale_profile.amount_available += float(transaction.total_price)

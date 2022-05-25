@@ -193,7 +193,10 @@ class PayFreeEvent(APIView):
         
         transaction_recover, assistant = pay_transaction(transaction)
 
+        print("LO CREO O NO")
         print(assistant)
+        print("LO CREO O NO")
+        
         if transaction_recover and assistant:
             threading.Thread(target=send_ticket_mail, args=(transaction_recover.ticket_type.event, assistant, transaction_recover)).start()
 
