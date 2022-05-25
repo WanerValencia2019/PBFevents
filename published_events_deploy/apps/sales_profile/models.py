@@ -31,7 +31,7 @@ class Withdrawal(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{} - {}".format(self.sale_profile.email, self.amount_withdrawn)
+        return "{} - {}".format(self.sale_profile.user.email, self.amount_withdrawn)
 
 
 @receiver(pre_save, sender=Withdrawal)
