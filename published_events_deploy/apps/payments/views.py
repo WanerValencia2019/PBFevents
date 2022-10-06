@@ -111,6 +111,13 @@ class PaymentView(View):
 
 class PaymentConfirmPayu(View):
     def get(self, request, *args, **kwargs):
+        """
+        It checks if the transaction was approved, if it was, it recovers the transaction and sends the
+        ticket to the user, if not, it cancels the transaction
+        
+        :param request: The request object
+        :return: The response is being returned in the form of a dictionary.
+        """
         data = request.GET
         transaction = Transaction.objects.filter(id=data.get("referenceCode")).select_related("ticket_type").first()
         STATUS = data.get("lapResponseCode")
@@ -130,8 +137,15 @@ class PaymentResponsePayu(View):
         return render(request, 'payment/payu_response.html', context={"pay": data})
 
 
+
 class PayFreeEvent(APIView):
     def post(self, request, *args, **kwargs):
+        """
+        It creates a transaction and returns the transaction id
+        
+        :param request: The request object
+        :return: A transaction object
+        """
 
         data: dict = request.data
         email = data.get("email", None)
@@ -193,10 +207,6 @@ class PayFreeEvent(APIView):
         
         transaction_recover, assistant = pay_transaction(transaction)
 
-        print("LO CREO O NO")
-        print(assistant)
-        print("LO CREO O NO")
-        
         if transaction_recover and assistant:
             threading.Thread(target=send_ticket_mail, args=(transaction_recover.ticket_type.event, assistant, transaction_recover)).start()
 

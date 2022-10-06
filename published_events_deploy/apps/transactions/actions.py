@@ -42,6 +42,7 @@ def create_transaction(user_identification:str, ticket_type:TicketType, ticket_a
 
     return transaction
 
+
 @transaction.atomic
 def pay_transaction(transaction:Transaction) -> any:
     transaction.status = TransactionStatus.PAYED
