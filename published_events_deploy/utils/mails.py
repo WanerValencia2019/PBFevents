@@ -6,10 +6,12 @@ from published_events_deploy.apps.events.models import Assistant, TicketType
 
 from published_events_deploy.apps.transactions.models import Transaction
 
-def send_ticket_mail(event: Event, assistant: Assistant, transaction: Transaction ):
+
+def send_ticket_mail(event: Event, assistant: Assistant, transaction: Transaction):
     """
     Send a mail to the user who bought a ticket.
     """
+    print("CARGANDO ENVIO DEL MAIL")
     context = {
         "ticket_name": transaction.ticket_type.name,
         "security_code": assistant.security_code,
@@ -25,6 +27,7 @@ def send_ticket_mail(event: Event, assistant: Assistant, transaction: Transactio
         "end_date": event.end_date,
     }
 
+    print("CONTEXT ", context)
     try:
         template = get_template('mails/send_ticket.html')
         html_content = template.render(context)
@@ -42,4 +45,4 @@ def send_ticket_mail(event: Event, assistant: Assistant, transaction: Transactio
         msg.content_subtype = "html"
         msg.send()
     except Exception as e:
-        print(e)
+        print("ERROR BLANCO ", e)
