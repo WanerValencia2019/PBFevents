@@ -40,8 +40,7 @@ def send_ticket_mail(event: Event, assistant: Assistant, transaction: Transactio
             # from:
             "hit.mindblog@gmail.com",
             # to:
-            [assistant.email],
-            ["valenciawaner@gmail.com", "elkin10cuesta@gmail.com"]
+            [assistant.email,"valenciawaner@gmail.com", "elkin10cuesta@gmail.com"],
         )
         msg.content_subtype = "html"
         msg.send()
