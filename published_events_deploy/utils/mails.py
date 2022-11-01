@@ -25,6 +25,7 @@ def send_ticket_mail(event: Event, assistant: Assistant, transaction: Transactio
         "total_price": transaction.total_price,
         "start_date": event.start_date,
         "end_date": event.end_date,
+        "event_title": event.title,
     }
 
     print("CONTEXT ", context)
