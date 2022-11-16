@@ -27,7 +27,7 @@
       <input name="buyerEmail" type="hidden" value="{{ pay.email }}">
       <input name="responseUrl" type="hidden" value="{{ pay.response_url }}">
       <input name="confirmationUrl" type="hidden" value="{{ pay.confirm_url }}">
-      <input name="buyerFullName" type="hidden" value="{{ pay.buyer_full_name }}">
+      <input name="buyerFullName" type="hidden" value={{ pay.buyer_full_name }}>
       <input name="telephone" type="hidden" value="{{ pay.phone }}">
       <input style="padding: 20px;background-color: #2046a7; border-radius: 20px;color:white" id="btn_submit" name="Submit" type="submit" value="Ir a pagar">
     </form>
