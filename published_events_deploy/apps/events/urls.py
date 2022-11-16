@@ -1,11 +1,12 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from published_events_deploy.apps.events.views import CategoriesView, CreateEventView, EventView, ListEvents, DetailEvent, NearEvents,VerifyAssistant, MyAssistantsView
+from published_events_deploy.apps.events.views import CategoriesView, CreateEventView, EventView, ListEvents, DetailEvent, NearEvents,VerifyAssistant, MyAssistantsView, DeleteEvent
 
 router = DefaultRouter()
 
 router.register(viewset=DetailEvent, basename="event-detail", prefix="event/detail")
+router.register(viewset=DeleteEvent, basename="delete-event", prefix="event")
 router.register(viewset=ListEvents, basename="events", prefix="events/list")
 router.register(viewset=VerifyAssistant, basename="event-assistant", prefix="events/assistant")
 router.register(viewset=MyAssistantsView, basename="event-assistant", prefix="events/assistant/me")

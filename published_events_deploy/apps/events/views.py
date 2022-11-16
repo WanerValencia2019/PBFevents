@@ -2,7 +2,7 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, DestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet, ViewSetMixin
@@ -21,6 +21,7 @@ from published_events_deploy.apps.multimedia.serializers import ImageSerializer
 from published_events_deploy.apps.utils import get_binary_content
 from published_events_deploy.utils.all import get_point_distance
 from published_events_deploy.utils.mails import send_ticket_mail
+
 
 class EventView(ViewSet):
     serializer_class = EventInfoSerializer
@@ -42,11 +43,9 @@ class EventView(ViewSet):
         }, status=status.HTTP_200_OK)
 
     @action(methods=["POST"], url_name="create new event", url_path="new", detail=False)
-    def create_event(self, request, *args, **kwargs): 
- 
+    def create_event(self, request, *args, **kwargs):
 
-        return Response({"message":["Evento creado satisfactoriamente"],"data": "Hello"}, status=status.HTTP_201_CREATED)
-
+        return Response({"message": ["Evento creado satisfactoriamente"], "data": "Hello"}, status=status.HTTP_201_CREATED)
 
     @action(methods=["POST"], url_name="add-ticket-to-event", url_path="set_main_image", detail=True, )
     def set_main_image(self, request, *args, **kwargs):
@@ -105,7 +104,6 @@ class EventView(ViewSet):
 
             event.other_images.add(new_image)
             event.save()
-        
 
             return Response({"message": "Imagen agregada correctamente"}, status=status.HTTP_200_OK)
         except ObjectDoesNotExist as e:
@@ -144,14 +142,14 @@ class ListEvents(ViewSetMixin, ListAPIView):
 
     def get_queryset(self):
         search = self.request.query_params.get("search", None)
-        status = self.request.query_params.get("status", "all") #active #expired #all
+        status = self.request.query_params.get("status", "all")  # active #expired #all
         queryset = self.queryset
         if search:
             queryset = queryset.filter(Q(title__icontains=search) | Q(description__icontains=search) | Q(
                 created_by__first_name__icontains=search))
 
         if status == "active":
-            queryset = queryset.filter(sell_limit_date__gte=datetime.now()) 
+            queryset = queryset.filter(sell_limit_date__gte=datetime.now())
         elif status == "expired":
             queryset = queryset.filter(sell_limit_date__lt=datetime.now())
 
@@ -208,10 +206,36 @@ class DetailEvent(ViewSetMixin, RetrieveAPIView):
         tickets = TicketType.objects.filter(event__id=queryset.id)
         tickets_serialized = TicketTypeSerializer(instance=tickets, many=True, context={"request": request}).data
         data = serialized_data.data
-        data["tickets"]=tickets_serialized
+        data["tickets"] = tickets_serialized
 
         return Response({"data": data}, status=status.HTTP_200_OK)
 
+
+class DeleteEvent(ViewSetMixin, RetrieveAPIView):
+    serializer_class = EventInfoSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        try:
+            event = Event.objects.get(id=pk)
+            return event
+        except ObjectDoesNotExist as e:
+            return None
+
+    def destroy(self, request, *args, **kwargs):
+        event = self.get_queryset()
+
+        if not event:
+            return Response({"message": "Evento no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+        assistans = Assistant.objects.filter(ticket__event__id=event.id)
+
+        if assistans.count() > 0:
+            return Response({"message": "No está permitido eliminar eventos con asistentes"}, status=status.HTTP_403_FORBIDDEN)
+
+        event.delete()
+
+        return Response({"message": "Evento eliminado correctamente"}, status=status.HTTP_200_OK)
 
 
 class CategoriesView(ViewSetMixin, ListAPIView):
@@ -233,8 +257,8 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
         print("Hello my world")
         try:
             all_data = request.data
-            images:dict = request.data.get("images")
-            tickets:list = request.data.get("tickets")
+            images: dict = request.data.get("images")
+            tickets: list = request.data.get("tickets")
 
             info_data = {
                 "title": all_data.get("title"),
@@ -258,7 +282,7 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
 
             serialized_data = EventCreateSerializer(data=info_data, context={"request": request})
             serialized_data.is_valid(raise_exception=True)
-            event:Event = serialized_data.save()
+            event: Event = serialized_data.save()
 
             if not event:
                 return Response({"message": ["No se pudo crear el evento"]}, status=status.HTTP_400_BAD_REQUEST)
@@ -279,14 +303,14 @@ class CreateEventView(ViewSetMixin, CreateAPIView):
 
             new_event_serialized = EventInfoSerializer(instance=event, many=False, context={"request": request}).data
             return Response({"data": new_event_serialized}, status=status.HTTP_200_OK)
-        except Exception as e:   
+        except Exception as e:
             return Response({"message": [e.args]}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyAssistant(ViewSetMixin, ListAPIView):
 
     def list(self, request, *args, **kwargs):
-        
+
         try:
             data = request.query_params
             code = data.get('code', None)
@@ -303,14 +327,16 @@ class VerifyAssistant(ViewSetMixin, ListAPIView):
                 if not assistant:
                     return Response({"message": ["Código no válido"]}, status=status.HTTP_400_BAD_REQUEST)
 
-                assistant_serialized = AssistantSerializer(instance=assistant, many=False, context={"request": request}).data
+                assistant_serialized = AssistantSerializer(
+                    instance=assistant, many=False, context={"request": request}).data
                 return Response({"data": assistant_serialized}, status=status.HTTP_200_OK)
             except Exception as ex:
                 print(ex.args)
                 return Response({"message": ["código no válido"]}, status=status.HTTP_400_BAD_REQUEST)
-            
+
         except Exception as e:
             return Response({"message": [e.args]}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class MyAssistantsView(ViewSetMixin, ListAPIView):
     serializer_class = AssistantSerializer
@@ -324,7 +350,7 @@ class MyAssistantsView(ViewSetMixin, ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        if not queryset: 
+        if not queryset:
             return Response({"message": ["No hay asistencias, verifica tu identificación en el perfil"]}, status=status.HTTP_400_BAD_REQUEST)
 
         serialized_data = self.get_serializer_class()(instance=queryset, many=True, context={"request": request})
