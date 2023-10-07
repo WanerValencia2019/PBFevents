@@ -1,5 +1,4 @@
 from enum import Enum
-from http.client import ACCEPTED
 import uuid
 
 from django.db import models
@@ -11,22 +10,25 @@ User = get_user_model()
 
 
 class WithDrawalStatus(Enum):
-    CREATED='CREATED'
-    ACCEPTED='ACCEPTED'
-    DECLINED='DECLINED'
-    
+    CREATED = 'CREATED'
+    ACCEPTED = 'ACCEPTED'
+    DECLINED = 'DECLINED'
+
+
 choices = [(tag, tag.value) for tag in WithDrawalStatus]
+
+
 class Withdrawal(models.Model):
     status_choices = (
-        ('CREATED','CREATED'),
-        ('ACCEPTED','ACCEPTED'),
-        ('DECLINED','DECLINED'),
+        ('CREATED', 'CREATED'),
+        ('ACCEPTED', 'ACCEPTED'),
+        ('DECLINED', 'DECLINED'),
     )
     id = models.CharField(max_length=36, primary_key=True, blank=True)
     sale_profile = models.ForeignKey("SaleProfile", verbose_name="Perfil de usuario", on_delete=models.RESTRICT,
                                      related_name="withdraw_sale_profile")
     amount_withdrawn = models.FloatField(verbose_name="Dinero a retirar")
-    status = models.CharField(max_length=50,choices=status_choices,default='CREATED')
+    status = models.CharField(max_length=50, choices=status_choices, default='CREATED')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -38,13 +40,12 @@ class Withdrawal(models.Model):
 def set_uuid(instance, *args, **kwargs):
     if not instance.id:
         instance.id = uuid.uuid4().hex
-    
+
     if instance.status == 'ACCEPTED':
         instance.sale_profile.amount_available -= instance.amount_withdrawn
         instance.sale_profile.amount_retired += instance.amount_withdrawn
         instance.sale_profile.last_withdraw = instance.created_at
         instance.sale_profile.save()
-        
 
 
 class SaleProfile(models.Model):
